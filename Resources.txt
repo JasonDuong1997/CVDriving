@@ -1,0 +1,49 @@
+https://www.pyimagesearch.com/2017/09/11/object-detection-with-deep-learning-and-opencv/
+	Combining MobileNets and Single Shot Detectors  (both by Google)
+
+http://pdf.th7.cn/down/files/1312/OpenCV%20Computer%20Vision%20with%20Python.pdf
+	Using Haar Cascades to track faces in Python, OpenCV 
+
+https://github.com/tensorflow/models/tree/master/research/object_detection
+	Tensorflow Object Detection API (also by Google)
+
+https://www.pyimagesearch.com/wp-content/uploads/2014/02/ImageSearchEngineResourceGuide.pdf
+	Beginner resource guide
+
+
+http://opencv-python-tutroals.readthedocs.io/en/latest/py_tutorials/py_setup/py_intro/py_intro.html
+	OpenCV Python INTRO [Start Here]
+
+https://github.com/naokishibuya/car-finding-lane-lines/blob/master/Finding%20Lane%20Lines%20on%20the%20Road.ipynb
+	Condensing multiple lines into single lane lines
+
+https://python.swaroopch.com/
+	Python tutorial 
+
+
+====== TESTING ============
+Photos
+    https://kevinwojo.ifiles.wordpress.com/2014/08/side-of-the-road.jpgineFilter
+
+Video
+    https://youtu.be/kQCYPeDhdns?t=182 (police dash cam)
+
+Demonstration
+1. Drawing lanes on paint (continuous and dashed)
+2. Still photos 
+3. Youtube video
+
+Questions
+1. Optimization (increase FPS)
+2. Merge similar lines into singular line
+    - check slope value with most lines
+        - check similar x's and y's 
+        - take average of all slopes, x's, and y's
+    "maximum gap distance before it becomes one line"
+
+
+===== INSTALLING ==========
+	download python 3 for Windows
+https://www.python.org/downloads/
+	download opencv3
+https://www.solarianprogrammer.com/2016/09/17/install-opencv-3-with-python-3-on-windows/

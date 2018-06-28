@@ -3,8 +3,11 @@ from PIL import ImageGrab
 import cv2
 import time
 import pyautogui as pag
+import GameControls as GInput
 import math
 import traceback
+
+
 
 class LineList(list):
 	def __init__(self):
@@ -14,6 +17,7 @@ class LineList(list):
 	def addLine(self, item):
 		self.size += 1
 		self.append(item)
+
 
 
 def Edge(image):    # find edges of the image
@@ -166,6 +170,41 @@ def LineFilter(lineAggregator, lineCounts):  # remove unwanted lines
 def lineCountMax(lineCounts):
 	return lineCounts[1]
 
+
+
+############## Driving functions  ####################
+def applyGas(apply=True):
+	if (apply == True):
+		GInput.PressKey(GInput.Key.W)
+	else:
+		GInput.ReleaseKey(GInput.Key.W)
+
+
+def applyBreaks(apply=True):
+	if (apply == True):
+		GInput.PressKey(GInput.Key.S)
+	else:
+		GInput.ReleaseKey(GInput.Key.S)
+
+
+def steer_left():
+	GInput.PressKey(GInput.Key.A)
+	GInput.ReleaseKey(GInput.Key.D)
+
+
+def steer_right():
+	GInput.PressKey(GInput.Key.D)
+	GInput.ReleaseKey(GInput.Key.A)
+
+def release_all_controls():
+	GInput.ReleaseKey(GInput.Key.W)
+	GInput.ReleaseKey(GInput.Key.A)
+	GInput.ReleaseKey(GInput.Key.S)
+	GInput.ReleaseKey(GInput.Key.D)
+########################################################
+
+
+
 def main(): 
 	frames = 0.0
 	elapsed = time.time()
@@ -173,6 +212,10 @@ def main():
 
 	WIDTH,HEIGHT = pag.size()
 	vertices = np.array([[0,800], [0,400], [WIDTH/8, 150], [3*WIDTH/8,150], [WIDTH/2,400], [WIDTH/2,800]], np.int32)
+
+	for i in range(0,3):
+		print("On the count of 3: {}" .format(i))
+		time.sleep(1)
 
 	while(True):
 			# 800x600 windowed mode
@@ -186,10 +229,15 @@ def main():
 			image2 = Region(image2, [vertices])
 			slope_L, slope_R = Lines(image2)
 
+			release_all_controls()
 			if (math.fabs(slope_L) > math.fabs(slope_R)):
 				cv2.arrowedLine(image2, (20, 20), (40, 20), (255, 255, 255), thickness=2, tipLength=.3)
+				steer_right()
+				applyGas()
 			elif (math.fabs(slope_L) < math.fabs(slope_R)):
 				cv2.arrowedLine(image2, (40, 20), (20, 20), (255, 255, 255), thickness=2, tipLength=.3)
+				steer_left()
+				applyGas()
 
 			cv2.imshow("Image", image2)
 

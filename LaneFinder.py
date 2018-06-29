@@ -7,6 +7,9 @@ import GameControls as GInput
 import math
 import traceback
 
+# GLOBAL VARIABLES
+drive = True
+police_dash = False
 
 
 class LineList(list):
@@ -18,20 +21,28 @@ class LineList(list):
 		self.size += 1
 		self.append(item)
 
-
-
-def Edge(image):    # find edges of the image
-	image2 = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)    # greyscale
-	image2 = cv2.Canny(image2, 200, 300)                # canny edge
-	image2 = cv2.GaussianBlur(image2, (3,3), 0)         # apply blur to improve edges
-	return image2
-
+def lineCountMax(lineCounts):
+	return lineCounts[1]
 
 def Lines(image):   # draw HoughLines 
-	# 70, 30
-	line_min = 50
-	gap_max = 30
+	# 50, 30 for police cam
+	# 10, 50 for GTAV
+	if police_dash:
+		line_min = 40
+		gap_max = 50
+	else:
+		line_min = 50
+		gap_max = 50
 	lines = cv2.HoughLinesP(image, 1, np.pi/180, 100, np.array([]), line_min, gap_max)
+
+	'''
+	# //////////// TESTING
+	for line in lines:
+		coords = line[0]
+		cv2.line(image, (coords[0], coords[1]), (coords[2], coords[3]), (255,255,255), thickness=2)
+	return 0,0
+	# //////////////////
+	'''
 
 	lineAggregator_L = LineList()  # list to hold the most common lines (LEFT LINE)
 	lineAggregator_R = LineList()  # list to hold the most common lines (RIGHT LINE)
@@ -56,10 +67,32 @@ def Lines(image):   # draw HoughLines
 		return 0, 0
 
 
-def Region(image, vertices):    # only look at region of interest
-	mask = np.zeros_like(image)
+def ProcessImage(image, vertices):    # only look at region of interest
+	# // SELECTING COLORS // #
+	hsl = cv2.cvtColor(image, cv2.COLOR_BGR2HLS)
+	# picking out white color
+	lower = np.array([0, 200, 0], dtype="uint8")
+	upper = np.array([255, 255, 255], dtype="uint8")
+	white_mask = cv2.inRange(hsl, lower, upper)
+
+	# picking out yellow color
+	lower = np.array([80, 0, 100], dtype="uint8")
+	upper = np.array([120, 255, 255], dtype="uint8")
+	yellow_mask = cv2.inRange(hsl, lower, upper)
+
+	combined_mask = cv2.bitwise_or(white_mask, yellow_mask)
+	color_mask = cv2.bitwise_and(image, image, mask=combined_mask)
+
+	# // APPLYING EDGE DETECTION // #
+	image_grey = cv2.cvtColor(cv2.cvtColor(color_mask, cv2.COLOR_HLS2BGR), cv2.COLOR_BGR2GRAY)       # greyscale
+	image_blur = cv2.GaussianBlur(image_grey, (5,5), 0)         # apply blur to improve edges
+	image_edges = cv2.Canny(image_blur, 200, 300)               # canny edge
+
+	# // SELECTING REGION // #
+	mask = np.zeros_like(image_edges)
 	cv2.fillPoly(mask, vertices, 255)
-	masked = cv2.bitwise_and(image, mask)
+	masked = cv2.bitwise_and(image_edges, mask)
+
 	return masked
 
 
@@ -124,7 +157,6 @@ def LineFilter(lineAggregator, lineCounts):  # remove unwanted lines
 		count = 1
 		j = i + 1
 		print("TESTING: I {}" .format(i))
-	 #   print("TESTING: J {}" .format(j))
 		while (j < lineAggregator.size):
 			slope2 = lineAggregator[j][0]
 			y_int2 = lineAggregator[j][1]
@@ -167,8 +199,6 @@ def LineFilter(lineAggregator, lineCounts):  # remove unwanted lines
 	return coord1_a, coord1_b, slope_avg1
 
 
-def lineCountMax(lineCounts):
-	return lineCounts[1]
 
 
 
@@ -188,16 +218,16 @@ def applyBreaks(apply=True):
 
 
 def steer_left():
-	GInput.PressKey(GInput.Key.A)
 	GInput.ReleaseKey(GInput.Key.D)
+	GInput.PressKey(GInput.Key.A)
 
 
 def steer_right():
-	GInput.PressKey(GInput.Key.D)
 	GInput.ReleaseKey(GInput.Key.A)
+	GInput.PressKey(GInput.Key.D)
 
 def release_all_controls():
-	GInput.ReleaseKey(GInput.Key.W)
+	#GInput.ReleaseKey(GInput.Key.W)
 	GInput.ReleaseKey(GInput.Key.A)
 	GInput.ReleaseKey(GInput.Key.S)
 	GInput.ReleaseKey(GInput.Key.D)
@@ -215,31 +245,40 @@ def main():
 
 	for i in range(0,3):
 		print("On the count of 3: {}" .format(i))
-		time.sleep(1)
+		time.sleep(.5)
 
 	while(True):
 			# 800x600 windowed mode
 			# bbox(x, y, width, height)
-			image = np.array(ImageGrab.grab(bbox=(0, HEIGHT/4, WIDTH/2, 800)))  # grabbing screen into a numpy array
+
+			if police_dash == True:
+				image = np.array(ImageGrab.grab(bbox=(0, HEIGHT/4, WIDTH/2, 800)))  # grabbing screen into a numpy array  // for police dash
+			else:
+				image = np.array(ImageGrab.grab(bbox=(0, 0, 900, 600)))  # grabbing screen into a numpy array	// for GTAV
 
 			print("loop took {} seconds " .format(time.time()-last_time))
 			last_time = time.time()
 
-			image2 = Edge(image)
-			image2 = Region(image2, [vertices])
-			slope_L, slope_R = Lines(image2)
+			processed_image = ProcessImage(image, [vertices])
+			#cv2.imshow("Image", np.hstack([image,image2]))
 
-			release_all_controls()
+			slope_L, slope_R = Lines(processed_image)
+
+			if drive:
+				pass
+				#release_all_controls()
 			if (math.fabs(slope_L) > math.fabs(slope_R)):
-				cv2.arrowedLine(image2, (20, 20), (40, 20), (255, 255, 255), thickness=2, tipLength=.3)
-				steer_right()
-				applyGas()
+				cv2.arrowedLine(processed_image, (20, 20), (40, 20), (255, 255, 255), thickness=2, tipLength=.3)
+				if drive:
+					steer_right()
+					#applyGas()
 			elif (math.fabs(slope_L) < math.fabs(slope_R)):
-				cv2.arrowedLine(image2, (40, 20), (20, 20), (255, 255, 255), thickness=2, tipLength=.3)
-				steer_left()
-				applyGas()
+				cv2.arrowedLine(processed_image, (40, 20), (20, 20), (255, 255, 255), thickness=2, tipLength=.3)
+				if drive:
+					steer_left()
+					#applyGas()
 
-			cv2.imshow("Image", image2)
+			cv2.imshow("Image", processed_image)
 
 			# for counting the number of frames
 			frames = frames + 1

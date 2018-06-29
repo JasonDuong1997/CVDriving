@@ -20,6 +20,8 @@ https://github.com/naokishibuya/car-finding-lane-lines/blob/master/Finding%20Lan
 https://python.swaroopch.com/
 	Python tutorial 
 
+https://medium.com/@tjosh.owoyemi/finding-lane-lines-with-colour-thresholds-beb542e0d839
+    color thresholding
 
 ====== TESTING ============
 Photos

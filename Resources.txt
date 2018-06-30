@@ -30,6 +30,8 @@ Photos
 Video
     https://youtu.be/kQCYPeDhdns?t=182 (police dash cam)
 
+GTAV
+
 Demonstration
 1. Drawing lanes on paint (continuous and dashed)
 2. Still photos 
@@ -45,7 +47,53 @@ Questions
 
 
 ===== INSTALLING ==========
-	download python 3 for Windows
+    Python 3 for Windows
 https://www.python.org/downloads/
 	download opencv3
 https://www.solarianprogrammer.com/2016/09/17/install-opencv-3-with-python-3-on-windows/
+
+    Enhanced GTAV Native Trainer:
+https://www.gta5-mods.com/scripts/enhanced-native-trainer-zemanez-and-others
+Little Seoul
+Coordinates: (-509.088, -764.486, 31.2167)
+
+
+
+
+MODIFIABLE VALUES
+[Globals]
+drive	        whether or not to apply autoinput
+police_dash	    settings for police cam video
+
+[Lines]:
+line_min	    minimum line length to be considered a line
+gap_max		    maximum gap between points to be considered a line
+
+[Color Selection]:
+lower		    lower bound for HSL color
+upper 		    upper bound for HSL color
+
+[Edge Detection]:
+(#, #)		    Gaussian Blur kernel (must be odd numbers)
+min, max	    Canny Edge Hysteresis Threshold values
+		        "Any edges with intensity gradient more than "max" are sure to be edges and those below "min" are sure to be
+		        non-edges, so discarded. Those who lie between these two thresholds are classified edges or non-edges based
+		        on their connectivity."
+
+[Region]:
+vertices	    Vertices that contain the region of interest
+
+[PopulateLineLists]:
+s_threshold     Slope magnitude must be above this to pass through the non-horizontal line filter
+
+[LineFilter]:
+rel_tol		    Tolerance for comparing similarity between the two lines
+
+
+
+
+/****** REVIEW *****/
+Color Selection:
+pros - can choose both yellow and white lanes and ignore other colors
+cons - have to know color range in HSL
+     - hard to find lanes in the shade

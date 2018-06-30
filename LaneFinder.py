@@ -8,7 +8,7 @@ import math
 import traceback
 
 # GLOBAL VARIABLES
-drive = True
+drive = False
 police_dash = False
 
 
@@ -68,7 +68,7 @@ def Lines(image):   # draw HoughLines
 
 
 def ProcessImage(image, vertices):    # only look at region of interest
-	# // SELECTING COLORS // #
+	# // COLOR SELECTION // #
 	hsl = cv2.cvtColor(image, cv2.COLOR_BGR2HLS)
 	# picking out white color
 	lower = np.array([0, 200, 0], dtype="uint8")
@@ -86,7 +86,7 @@ def ProcessImage(image, vertices):    # only look at region of interest
 	# // APPLYING EDGE DETECTION // #
 	image_grey = cv2.cvtColor(cv2.cvtColor(color_mask, cv2.COLOR_HLS2BGR), cv2.COLOR_BGR2GRAY)       # greyscale
 	image_blur = cv2.GaussianBlur(image_grey, (5,5), 0)         # apply blur to improve edges
-	image_edges = cv2.Canny(image_blur, 200, 300)               # canny edge
+	image_edges = cv2.Canny(image_blur, min=200, max=300)               # canny edge
 
 	# // SELECTING REGION // #
 	mask = np.zeros_like(image_edges)
@@ -100,12 +100,14 @@ def PopulateLineLists(coords, lineAggregator_L, lineAggregator_R):
 	dY = -1 * (coords[3] - coords[1])  # inverting since origin point is at top of screen
 	dX = coords[2] - coords[0]
 
+	s_threshold = .2
+
 	if (dX != 0):  # if denominator is no equal to 0
 		print("X1 = {}, Y1 = {} \nX2 = {}, Y2 = {}".format(coords[0], coords[1], coords[2], coords[3]))
 		slope = dY / dX
 		distance = math.sqrt(math.pow(dX, 2) + math.pow(dY, 2))
 
-		if (slope >= .2):  # POPULATING LEFT LINE
+		if (slope >= s_threshold):  # POPULATING LEFT LINE
 			print("Slope: {}".format(slope))
 			y_int = coords[3] + slope * coords[2]
 			print("Y-Intercept: {}".format(y_int))
@@ -121,7 +123,7 @@ def PopulateLineLists(coords, lineAggregator_L, lineAggregator_R):
 			print("This is the slope: {} ".format(dY / dX))
 			print("This is distance: {} ".format(distance))
 
-		elif (slope <= -.2):  # POPULATING RIGHT LINE
+		elif (slope <= -s_threshold ):  # POPULATING RIGHT LINE
 			print("Slope: {}".format(slope))
 			y_int = coords[3] + slope * coords[2]
 			print("Y-Intercept: {}".format(y_int))
@@ -241,7 +243,7 @@ def main():
 	last_time = time.time()
 
 	WIDTH,HEIGHT = pag.size()
-	vertices = np.array([[0,800], [0,400], [WIDTH/8, 150], [3*WIDTH/8,150], [WIDTH/2,400], [WIDTH/2,800]], np.int32)
+	vertices = np.array([[0,800], [0,400], [WIDTH/8, 175], [3*WIDTH/8,175], [WIDTH/2,400], [WIDTH/2,800]], np.int32)
 
 	for i in range(0,3):
 		print("On the count of 3: {}" .format(i))
@@ -265,8 +267,7 @@ def main():
 			slope_L, slope_R = Lines(processed_image)
 
 			if drive:
-				pass
-				#release_all_controls()
+				release_all_controls()
 			if (math.fabs(slope_L) > math.fabs(slope_R)):
 				cv2.arrowedLine(processed_image, (20, 20), (40, 20), (255, 255, 255), thickness=2, tipLength=.3)
 				if drive:

@@ -23,6 +23,9 @@ https://python.swaroopch.com/
 https://medium.com/@tjosh.owoyemi/finding-lane-lines-with-colour-thresholds-beb542e0d839
     color thresholding
 
+https://www.w3schools.com/colors/colors_hsl.asp
+    HSL ColorPicker
+
 ====== TESTING ============
 Photos
     https://kevinwojo.ifiles.wordpress.com/2014/08/side-of-the-road.jpgineFilter

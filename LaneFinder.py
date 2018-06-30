@@ -86,7 +86,7 @@ def ProcessImage(image, vertices):    # only look at region of interest
 	# // APPLYING EDGE DETECTION // #
 	image_grey = cv2.cvtColor(cv2.cvtColor(color_mask, cv2.COLOR_HLS2BGR), cv2.COLOR_BGR2GRAY)       # greyscale
 	image_blur = cv2.GaussianBlur(image_grey, (5,5), 0)         # apply blur to improve edges
-	image_edges = cv2.Canny(image_blur, min=200, max=300)               # canny edge
+	image_edges = cv2.Canny(image_blur, threshold1=200, threshold2=300)               # canny edge
 
 	# // SELECTING REGION // #
 	mask = np.zeros_like(image_edges)

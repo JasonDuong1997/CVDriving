@@ -4,6 +4,7 @@ import cv2
 import time
 import pyautogui as pag
 import GameControls as GInput
+import win32gui
 import math
 import traceback
 
@@ -192,24 +193,28 @@ def LineFilter(lineAggregator, lineCounts):  # remove unwanted lines
 	y_int_avg /= (index_end - index_start)
 	print("SLOPE1: {}       Y-INT: {}" .format(slope_avg, y_int_avg))
 
-	'''
+	# checking 2nd strongest line for closest x-intercept
 	slope_avg2 = 0
 	y_int_avg2 = 0
-	index_start2 = lineCounts[0][1]
-	index_end2 = index_start + lineCounts[0][1]
-	for i in range(index_start, index_end):
-		slope_avg += lineAggregator[i][0]
-		y_int_avg += lineAggregator[i][1]
-	slope_avg /= (index_end - index_start)
-	y_int_avg /= (index_end - index_start)
-	print("SLOPE1: {}       Y-INT: {}" .format(slope_avg, y_int_avg))
-	'''
+	index_start2 = lineCounts[1][0]
+	index_end2 = index_start + lineCounts[1][1]
+	for i in range(index_start2, index_end2):
+		slope_avg2 += lineAggregator[i][0]
+		y_int_avg2 += lineAggregator[i][1]
+	slope_avg2 /= (index_end2 - index_start2)
+	y_int_avg2 /= (index_end2 - index_start2)
+	print("SLOPE1: {}       Y-INT: {}" .format(slope_avg2, y_int_avg2))
 
 	#calculating coordinates of the line
 	width,height = pag.size()
 	print("WIDTH {}    HEIGHT {}" .format(width, height))
-	x_bottom = -(height - y_int_avg)/slope_avg
-	x_top = y_int_avg/slope_avg
+	x_bottom1 = -(height - y_int_avg)/slope_avg
+	#x_top1 = y_int_avg/slope_avg
+	x_bottom2 = -(height - y_int_avg2)/slope_avg
+	#x_top2 = y_int_avg/slope_avg2
+
+
+	#if (math.fabs())
 	coord_a = [int(x_bottom), int(height)]
 	coord_b = [int(x_top), 0]
 

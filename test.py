@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 from PIL import ImageGrab
 import pyautogui as pag
-
+import win32gui
 
 while (1):
 	WIDTH,HEIGHT = pag.size()

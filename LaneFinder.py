@@ -179,27 +179,39 @@ def LineFilter(lineAggregator, lineCounts):  # remove unwanted lines
 	print("SORTED LINE COUNT: {}" .format(lineCounts))
 
 	# calculate the average of the strongest line
-	slope_avg1 = 0
-	y_int_avg1 = 0
-	index_start1 = lineCounts[0][0]
-	index_end1 = index_start1 + lineCounts[0][1]
-	for i in range(index_start1, index_end1):
-		slope_avg1 += lineAggregator[i][0]
-		y_int_avg1 += lineAggregator[i][1]
-	slope_avg1 /= (index_end1 - index_start1)
-	y_int_avg1 /= (index_end1 - index_start1)
-	print("SLOPE1: {}       Y-INT: {}" .format(slope_avg1, y_int_avg1))
+	slope_avg = 0
+	y_int_avg = 0
+	index_start = lineCounts[0][0]
+	index_end = index_start + lineCounts[0][1]
+	for i in range(index_start, index_end):
+		slope_avg += lineAggregator[i][0]
+		y_int_avg += lineAggregator[i][1]
+	slope_avg /= (index_end - index_start)
+	y_int_avg /= (index_end - index_start)
+	print("SLOPE1: {}       Y-INT: {}" .format(slope_avg, y_int_avg))
+
+	'''
+	slope_avg2 = 0
+	y_int_avg2 = 0
+	index_start2 = lineCounts[0][1]
+	index_end2 = index_start + lineCounts[0][1]
+	for i in range(index_start, index_end):
+		slope_avg += lineAggregator[i][0]
+		y_int_avg += lineAggregator[i][1]
+	slope_avg /= (index_end - index_start)
+	y_int_avg /= (index_end - index_start)
+	print("SLOPE1: {}       Y-INT: {}" .format(slope_avg, y_int_avg))
+	'''
 
 	#calculating coordinates of the line
 	width,height = pag.size()
 	print("WIDTH {}    HEIGHT {}" .format(width, height))
-	x1_bottom = -(height - y_int_avg1)/slope_avg1
-	x1_top = y_int_avg1/slope_avg1
-	coord1_a = [int(x1_bottom), int(height)]
-	coord1_b = [int(x1_top), 0]
+	x_bottom = -(height - y_int_avg)/slope_avg
+	x_top = y_int_avg/slope_avg
+	coord_a = [int(x_bottom), int(height)]
+	coord_b = [int(x_top), 0]
 
-	return coord1_a, coord1_b, slope_avg1
-
+	return coord_a, coord_b, slope_avg
 
 
 ############## Driving functions  ####################
@@ -241,7 +253,7 @@ def main():
 	last_time = time.time()
 
 	WIDTH,HEIGHT = pag.size()
-	vertices = np.array([[0,800], [0,400], [WIDTH/8, 175], [3*WIDTH/8,175], [WIDTH/2,400], [WIDTH/2,800], [WIDTH/4, 300]], np.int32)
+	vertices = np.array([[0,800], [0,400], [WIDTH/8, 175], [3*WIDTH/8,175], [WIDTH/2,400], [WIDTH/2,800],  [9*WIDTH/32, 325], [7*WIDTH/32, 325]], np.int32)
 
 	for i in range(0,3):
 		print("On the count of 3: {}" .format(i))

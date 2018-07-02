@@ -32,7 +32,7 @@ def Lines(image):   # draw HoughLines
 		gap_max = 50
 	else:
 		line_min = 50
-		gap_max = 50
+		gap_max = 60
 	lines = cv2.HoughLinesP(image, 1, np.pi/180, 100, np.array([]), line_min, gap_max)
 
 	'''
@@ -84,9 +84,9 @@ def ProcessImage(image, vertices):    # only look at region of interest
 	color_mask = cv2.bitwise_and(image, image, mask=combined_mask)
 
 	# // APPLYING EDGE DETECTION // #
-	image_grey = cv2.cvtColor(cv2.cvtColor(color_mask, cv2.COLOR_HLS2BGR), cv2.COLOR_BGR2GRAY)       # greyscale
-	image_blur = cv2.GaussianBlur(image_grey, (5,5), 0)         # apply blur to improve edges
-	image_edges = cv2.Canny(image_blur, threshold1=200, threshold2=300)               # canny edge
+	image_grey = cv2.cvtColor(cv2.cvtColor(color_mask, cv2.COLOR_HLS2BGR), cv2.COLOR_BGR2GRAY)       # grey-scale
+	image_blur = cv2.GaussianBlur(image_grey, (5,5), 0)         									 # apply blur to smooth
+	image_edges = cv2.Canny(image_blur, threshold1=200, threshold2=300)              				 # Canny edge
 
 	# // SELECTING REGION // #
 	mask = np.zeros_like(image_edges)
@@ -202,8 +202,6 @@ def LineFilter(lineAggregator, lineCounts):  # remove unwanted lines
 
 
 
-
-
 ############## Driving functions  ####################
 def applyGas(apply=True):
 	if (apply == True):
@@ -243,7 +241,7 @@ def main():
 	last_time = time.time()
 
 	WIDTH,HEIGHT = pag.size()
-	vertices = np.array([[0,800], [0,400], [WIDTH/8, 175], [3*WIDTH/8,175], [WIDTH/2,400], [WIDTH/2,800]], np.int32)
+	vertices = np.array([[0,800], [0,400], [WIDTH/8, 175], [3*WIDTH/8,175], [WIDTH/2,400], [WIDTH/2,800], [WIDTH/4, 300]], np.int32)
 
 	for i in range(0,3):
 		print("On the count of 3: {}" .format(i))

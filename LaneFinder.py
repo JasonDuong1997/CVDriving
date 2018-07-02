@@ -260,8 +260,15 @@ def main():
 	last_time = time.time()
 
 	WIDTH,HEIGHT = pag.size()
-	y_van = 175
 	#vertices = np.array([[0,800], [0,350], [WIDTH/8, y_van], [3*WIDTH/8,y_van], [WIDTH/2,350], [WIDTH/2,800],  [9*WIDTH/32, 350], [7*WIDTH/32, 350]], np.int32)
+
+	hwnd = win32gui.FindWindow(None, "Grand Theft Auto V")
+	rect = win32gui.GetWindowRect(hwnd)
+	win_x = rect[0]
+	win_y = rect[0]
+	win_w = rect[2] - win_x
+	win_h = rect[3] - win_y
+	y_van = 11*win_h/50
 
 	for i in range(0,3):
 		print("On the count of 3: {}" .format(i))
@@ -270,12 +277,15 @@ def main():
 	while(True):
 			# 800x600 windowed mode
 			# bbox(x, y, width, height)
-			vertices = np.array([[0, 800], [0, 350], [WIDTH / 8, y_van], [3 * WIDTH / 8, y_van], [WIDTH / 2, 350], [WIDTH / 2, 800], [9 * WIDTH / 32, 350], [7 * WIDTH / 32, 350]], np.int32)
+			#vertices = np.array([[0, 800], [0, 350], [WIDTH / 8, y_van], [3 * WIDTH / 8, y_van], [WIDTH / 2, 350], [WIDTH / 2, 800], [9 * WIDTH / 32, 350], [7 * WIDTH / 32, 350]], np.int32)
+			vertices = np.array([[0, win_h], [0, 7*win_h/16], [win_w/4, y_van], [3*win_w/4, y_van], [win_w, 7*win_h/16], [win_w, win_h], [5*win_w/8, 11*win_h/16], [3*win_w/8, 11*win_h/16]], np.int32)
+
 
 			if police_dash == True:
 				image = np.array(ImageGrab.grab(bbox=(0, HEIGHT/4, WIDTH/2, 800)))  # grabbing screen into a numpy array  // for police dash
 			else:
-				image = np.array(ImageGrab.grab(bbox=(0, 0, 900, 600)))  # grabbing screen into a numpy array	// for GTAV
+				image = np.array(ImageGrab.grab(bbox=(win_x, win_y, win_w, win_h)))  # grabbing screen into a numpy array	// for GTAV
+
 
 			print("loop took {} seconds " .format(time.time()-last_time))
 			last_time = time.time()

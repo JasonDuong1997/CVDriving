@@ -26,6 +26,9 @@ https://medium.com/@tjosh.owoyemi/finding-lane-lines-with-colour-thresholds-beb5
 https://www.w3schools.com/colors/colors_hsl.asp
     HSL ColorPicker
 
+https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5017478/
+    Line Segment Detector
+
 ====== TESTING ============
 Photos
     https://kevinwojo.ifiles.wordpress.com/2014/08/side-of-the-road.jpgineFilter

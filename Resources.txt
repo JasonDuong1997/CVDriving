@@ -29,6 +29,9 @@ https://www.w3schools.com/colors/colors_hsl.asp
 https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5017478/
     Line Segment Detector
 
+https://www.youtube.com/watch?v=VyLihutdsPk
+    bird's eye view, cv2.getPerspectiveTransform, curved lanes
+
 ====== TESTING ============
 Photos
     https://kevinwojo.ifiles.wordpress.com/2014/08/side-of-the-road.jpgineFilter

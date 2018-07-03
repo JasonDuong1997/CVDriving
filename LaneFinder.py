@@ -54,11 +54,13 @@ def Lines(image):   # draw HoughLines
 		coord1_a, coord1_b, slope_L, y_int_L = LineFilter(lineAggregator_L, lineCounts_L)
 		coord2_a, coord2_b, slope_R, y_int_R = LineFilter(lineAggregator_R, lineCounts_R)
 
-		cv2.line(image, (coord1_a[0], coord1_a[1]), (coord1_b[0], coord1_b[1]), (255,255,255), thickness=2)
-		cv2.line(image, (coord2_a[0], coord2_a[1]), (coord2_b[0], coord2_b[1]), (255,255,255), thickness=6)
-
 		# updating ROI
 		x_van,y_van = FindVanishingPoint(slope_L, slope_R, y_int_L, y_int_R)
+		print("VANISHING POINTS: ({}, {})" .format(x_van, y_van))
+		cv2.circle(image, (int(x_van), int(y_van)), 10, (255,255,255), thickness=3)
+
+		cv2.line(image, (coord1_a[0], coord1_a[1]), (int(x_van), int(y_van)), (255,255,255), thickness=2)
+		cv2.line(image, (coord2_a[0], coord2_a[1]), (int(x_van), int(y_van)), (255,255,255), thickness=6)
 
 		return slope_L, slope_R, y_van
 	except Exception:
@@ -97,8 +99,8 @@ def ProcessImage(image, vertices):    # only look at region of interest
 
 
 def FindVanishingPoint(slope1, slope2, y_int1, y_int2):
-	x = (y_int2 - y_int1)/(slope1 - slope2)
-	y = slope1*x + y_int1
+	x = -(y_int2 - y_int1)/(slope1 - slope2)
+	y = slope1*(-x) + y_int1
 
 	return x,y
 
@@ -294,7 +296,6 @@ def main():
 			# 800x600 windowed mode
 			# bbox(x, y, width, height)
 			vertices = np.array([[0, win_h], [0, 7*win_h/16], [win_w/4, y_van], [3*win_w/4, y_van], [win_w, 7*win_h/16], [win_w, win_h], [5*win_w/8, 11*win_h/16], [3*win_w/8, 11*win_h/16]], np.int32)
-
 
 			if police_dash == True:
 				image = np.array(ImageGrab.grab(bbox=(0, HEIGHT/4, WIDTH/2, 800)))  # grabbing screen into a numpy array  // for police dash

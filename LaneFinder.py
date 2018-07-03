@@ -11,7 +11,12 @@ import traceback
 # GLOBAL VARIABLES
 drive = False
 police_dash = False
-
+hwnd = win32gui.FindWindow(None, "Grand Theft Auto V")
+rect = win32gui.GetWindowRect(hwnd)
+win_x = rect[0]
+win_y = rect[0]
+win_w = rect[2] - win_x
+win_h = rect[3] - win_y
 
 class LineList(list):
 	def __init__(self):
@@ -194,29 +199,38 @@ def LineFilter(lineAggregator, lineCounts):  # remove unwanted lines
 	print("SLOPE1: {}       Y-INT: {}" .format(slope_avg, y_int_avg))
 
 	# checking 2nd strongest line for closest x-intercept
-	slope_avg2 = 0
-	y_int_avg2 = 0
-	index_start2 = lineCounts[1][0]
-	index_end2 = index_start + lineCounts[1][1]
-	for i in range(index_start2, index_end2):
-		slope_avg2 += lineAggregator[i][0]
-		y_int_avg2 += lineAggregator[i][1]
-	slope_avg2 /= (index_end2 - index_start2)
-	y_int_avg2 /= (index_end2 - index_start2)
-	print("SLOPE1: {}       Y-INT: {}" .format(slope_avg2, y_int_avg2))
+	if (len(lineCounts) > 1):
+		slope_avg2 = 0
+		y_int_avg2 = 0
+		index_start2 = lineCounts[1][0]
+		index_end2 = index_start2 + lineCounts[1][1]
+		for i in range(index_start2, index_end2):
+			slope_avg2 += lineAggregator[i][0]
+			y_int_avg2 += lineAggregator[i][1]
+		slope_avg2 /= (index_end2 - index_start2)
+		y_int_avg2 /= (index_end2 - index_start2)
+		print("SLOPE2: {}       Y-INT: {}" .format(slope_avg2, y_int_avg2))
 
 	#calculating coordinates of the line
-	width,height = pag.size()
-	print("WIDTH {}    HEIGHT {}" .format(width, height))
-	x_bottom1 = -(height - y_int_avg)/slope_avg
-	#x_top1 = y_int_avg/slope_avg
-	x_bottom2 = -(height - y_int_avg2)/slope_avg
-	#x_top2 = y_int_avg/slope_avg2
+	x_bottom1 = -(win_h - y_int_avg)/slope_avg
+	if (len(lineCounts) > 1):
+		x_bottom2 = -(win_h - y_int_avg2)/slope_avg2
 
-
-	#if (math.fabs())
-	coord_a = [int(x_bottom), int(height)]
-	coord_b = [int(x_top), 0]
+		# return line that is closest to vertical midline of the screen
+		if (math.fabs(win_w/2 - x_bottom1) < math.fabs(win_w/2 - x_bottom2)):
+			coord_a = [int(x_bottom1), int(win_h)]
+			x_top1 = y_int_avg/slope_avg
+			coord_b = [int(x_top1), 0]
+		else:
+			coord_a = [int(x_bottom2), int(win_h)]
+			x_top2 = y_int_avg2/slope_avg2
+			coord_b = [int(x_top2), 0]
+			slope_avg = slope_avg2
+			y_int_avg = y_int_avg2
+	else:
+		coord_a = [int(x_bottom1), int(win_h)]
+		x_top1 = y_int_avg / slope_avg
+		coord_b = [int(x_top1), 0]
 
 	return coord_a, coord_b, slope_avg, y_int_avg
 
@@ -262,12 +276,14 @@ def main():
 	WIDTH,HEIGHT = pag.size()
 	#vertices = np.array([[0,800], [0,350], [WIDTH/8, y_van], [3*WIDTH/8,y_van], [WIDTH/2,350], [WIDTH/2,800],  [9*WIDTH/32, 350], [7*WIDTH/32, 350]], np.int32)
 
+	"""
 	hwnd = win32gui.FindWindow(None, "Grand Theft Auto V")
 	rect = win32gui.GetWindowRect(hwnd)
 	win_x = rect[0]
 	win_y = rect[0]
 	win_w = rect[2] - win_x
 	win_h = rect[3] - win_y
+	"""
 	y_van = 11*win_h/50
 
 	for i in range(0,3):
@@ -277,7 +293,6 @@ def main():
 	while(True):
 			# 800x600 windowed mode
 			# bbox(x, y, width, height)
-			#vertices = np.array([[0, 800], [0, 350], [WIDTH / 8, y_van], [3 * WIDTH / 8, y_van], [WIDTH / 2, 350], [WIDTH / 2, 800], [9 * WIDTH / 32, 350], [7 * WIDTH / 32, 350]], np.int32)
 			vertices = np.array([[0, win_h], [0, 7*win_h/16], [win_w/4, y_van], [3*win_w/4, y_van], [win_w, 7*win_h/16], [win_w, win_h], [5*win_w/8, 11*win_h/16], [3*win_w/8, 11*win_h/16]], np.int32)
 
 

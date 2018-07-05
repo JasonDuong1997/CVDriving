@@ -32,6 +32,9 @@ https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5017478/
 https://www.youtube.com/watch?v=VyLihutdsPk
     bird's eye view, cv2.getPerspectiveTransform, curved lanes
 
+https://dspace5.zcu.cz/bitstream/11025/11945/1/Jang.pdf
+    detecting lines with shadows casted on them
+
 ====== TESTING ============
 Photos
     https://kevinwojo.ifiles.wordpress.com/2014/08/side-of-the-road.jpgineFilter

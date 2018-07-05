@@ -71,6 +71,7 @@ def Lines(image):   # draw HoughLines
 
 def ProcessImage(image, vertices):    # only look at region of interest
 	# // COLOR SELECTION // #
+	"""
 	hsl = cv2.cvtColor(image, cv2.COLOR_BGR2HLS)
 	# picking out white color
 	lower = np.array([0, 200, 0], dtype="uint8")
@@ -84,16 +85,52 @@ def ProcessImage(image, vertices):    # only look at region of interest
 
 	combined_mask = cv2.bitwise_or(white_mask, yellow_mask)
 	color_mask = cv2.bitwise_and(image, image, mask=combined_mask)
+	"""
+	# selecting well-lit white lines
+	red = image[:,:,0]
+	green = image[:,:,1]
+	red_threshed = cv2.inRange(red, 210, 255)
+	green_threshed = cv2.inRange(green, 200, 255)
+	white_lit = cv2.bitwise_and(src1=red_threshed, src2=green_threshed)
+
+	# selecting well-lit yellow lines
+	hsl = cv2.cvtColor(image, cv2.COLOR_BGR2HLS)
+	s = hsl[:,:,2]
+	yellow_lit = cv2.inRange(s, 170, 255)
+
+	# checking for any lines in the shadows
+	shadow_grey = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+	shadow_blur = cv2.GaussianBlur(shadow_grey, (5,5), 0)         									 # apply blur to smooth
+	shadow_preedges = cv2.Canny(shadow_blur, threshold1=100, threshold2=170)
+	l = hsl[:,:,1]
+	l_threshed = cv2.inRange(l, 70, 100)
+	white_shadow = shadow_preedges & l_threshed
+
+	# selecting shadowed yellow lines
+	hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+	h = hsv[:,:,0]
+	sv = hsv[:,:,1]
+	sv_threshed = cv2.inRange(sv, 115, 255)
+	h_threshed = cv2.inRange(h, 80, 100)
+	yellow_shadow = sv_threshed & h_threshed
+
+	# adding up all of the thresholds
+	color_threshed = white_lit | yellow_lit | yellow_shadow
+	color_mask = cv2.bitwise_and(image, image, mask=color_threshed)
 
 	# // APPLYING EDGE DETECTION // #
 	image_grey = cv2.cvtColor(cv2.cvtColor(color_mask, cv2.COLOR_HLS2BGR), cv2.COLOR_BGR2GRAY)       # grey-scale
 	image_blur = cv2.GaussianBlur(image_grey, (5,5), 0)         									 # apply blur to smooth
 	image_edges = cv2.Canny(image_blur, threshold1=200, threshold2=300)              				 # Canny edge
 
+	total_edges = image_edges #| shadow_edges
+
 	# // SELECTING REGION // #
-	mask = np.zeros_like(image_edges)
+	mask = np.zeros_like(total_edges)
 	cv2.fillPoly(mask, vertices, 255)
-	masked = cv2.bitwise_and(image_edges, mask)
+	masked = cv2.bitwise_and(total_edges, mask)
+
+	cv2.imshow("shadow", yellow_shadow)
 
 	return masked
 
@@ -278,14 +315,6 @@ def main():
 	WIDTH,HEIGHT = pag.size()
 	#vertices = np.array([[0,800], [0,350], [WIDTH/8, y_van], [3*WIDTH/8,y_van], [WIDTH/2,350], [WIDTH/2,800],  [9*WIDTH/32, 350], [7*WIDTH/32, 350]], np.int32)
 
-	"""
-	hwnd = win32gui.FindWindow(None, "Grand Theft Auto V")
-	rect = win32gui.GetWindowRect(hwnd)
-	win_x = rect[0]
-	win_y = rect[0]
-	win_w = rect[2] - win_x
-	win_h = rect[3] - win_y
-	"""
 	y_van = 11*win_h/50
 
 	for i in range(0,3):

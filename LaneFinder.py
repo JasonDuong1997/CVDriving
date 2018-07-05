@@ -14,7 +14,7 @@ police_dash = False
 hwnd = win32gui.FindWindow(None, "Grand Theft Auto V")
 rect = win32gui.GetWindowRect(hwnd)
 win_x = rect[0]
-win_y = rect[0]
+win_y = rect[1]
 win_w = rect[2] - win_x
 win_h = rect[3] - win_y
 
@@ -329,7 +329,7 @@ def main():
 			if police_dash == True:
 				image = np.array(ImageGrab.grab(bbox=(0, HEIGHT/4, WIDTH/2, 800)))  # grabbing screen into a numpy array  // for police dash
 			else:
-				image = np.array(ImageGrab.grab(bbox=(win_x, win_y, win_w, win_h)))  # grabbing screen into a numpy array	// for GTAV
+				image = np.array(ImageGrab.grab(bbox=(win_x, win_y, rect[2], rect[3])))  # grabbing screen into a numpy array	// for GTAV
 
 
 			print("loop took {} seconds " .format(time.time()-last_time))

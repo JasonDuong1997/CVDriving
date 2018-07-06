@@ -37,7 +37,7 @@ def Lines(image):   # draw HoughLines
 		line_min = 40
 		gap_max = 50
 	else:
-		line_min = 30
+		line_min = 20
 		gap_max = 60
 	lines = cv2.HoughLinesP(image, 1, np.pi/180, 100, np.array([]), line_min, gap_max)
 
@@ -93,6 +93,12 @@ def ProcessImage(image, vertices):    # only look at region of interest
 	green_threshed = cv2.inRange(green, 200, 255)
 	white_lit = cv2.bitwise_and(src1=red_threshed, src2=green_threshed)
 
+	# selecting well-lit white lines (testing)
+	lab = cv2.cvtColor(image, cv2.COLOR_BGR2LAB)
+	l = lab[:,:,0]
+	l_threshed = cv2.inRange(l, 200, 255)
+	white_lit = l_threshed
+
 	# selecting well-lit yellow lines
 	hsl = cv2.cvtColor(image, cv2.COLOR_BGR2HLS)
 	s = hsl[:,:,2]
@@ -130,7 +136,7 @@ def ProcessImage(image, vertices):    # only look at region of interest
 	cv2.fillPoly(mask, vertices, 255)
 	masked = cv2.bitwise_and(total_edges, mask)
 
-	cv2.imshow("shadow", yellow_shadow)
+	cv2.imshow("shadow", total_edges)
 
 	return masked
 
@@ -311,6 +317,7 @@ def main():
 	frames = 0.0
 	elapsed = time.time()
 	last_time = time.time()
+	frame_loop = 0
 
 	WIDTH,HEIGHT = pag.size()
 	#vertices = np.array([[0,800], [0,350], [WIDTH/8, y_van], [3*WIDTH/8,y_van], [WIDTH/2,350], [WIDTH/2,800],  [9*WIDTH/32, 350], [7*WIDTH/32, 350]], np.int32)
@@ -357,13 +364,13 @@ def main():
 
 			# for counting the number of frames
 			frames = frames + 1
+
 			print("Number of frames: {} " .format(frames))
 			if cv2.waitKey(25) & 0xFF == ord('q'):
 					cv2.destroyAllWindows()
 					final_time = time.time()
 					print("Average FPS: {} " .format(frames/(final_time - elapsed)))
 					break
-
 
 if __name__ == "__main__":
 	main()

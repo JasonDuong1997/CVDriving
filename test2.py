@@ -40,7 +40,7 @@ def Order_PTPoints(points):
 
 
 def Birds_Eye_View(image):
-	points = ([4*win_w/8, win_h/5],[5*win_w/8, win_h/5],[win_w, 4*win_h/6], [0, 4*win_h/6])
+	points = ([13.5*win_w/32, 5.5*win_h/16],[18.5*win_w/32, 5.5*win_h/16],[31*win_w/32, 8*win_h/16], [1*win_w/32, 8*win_h/16])
 	trapezoid = Order_PTPoints(points)
 	(topL, topR, botL, botR) = trapezoid
 
@@ -65,11 +65,11 @@ def Birds_Eye_View(image):
 
 
 while (True):
-	image = np.array(ImageGrab.grab(bbox=(win_x, win_y, win_w, win_h)))  # grabbing screen into a numpy array	// for GTAV
+	image = np.array(ImageGrab.grab(bbox=(win_x, win_y, rect[2], rect[3])))  # grabbing screen into a numpy array	// for GTAV
 	image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 	processed_image = Birds_Eye_View(image)
 
-	cv2.imshow("WORKS", processed_image)
+	cv2.imshow("BIRDS EYE VIEW", processed_image)
 
 	if cv2.waitKey(25) & 0xFF == ord('q'):
 		cv2.destroyAllWindows()

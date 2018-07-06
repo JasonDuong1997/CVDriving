@@ -40,7 +40,7 @@ def Order_PTPoints(points):
 
 
 def Birds_Eye_View(image):
-	points = ([13.5*win_w/32, 5.5*win_h/16],[18.5*win_w/32, 5.5*win_h/16],[31*win_w/32, 8*win_h/16], [1*win_w/32, 8*win_h/16])
+	points = ([13.65*win_w/32, 14.5*win_h/32],[18.35*win_w/32, 14.5*win_h/32],[win_w, 19*win_h/32], [0, 19*win_h/32])
 	trapezoid = Order_PTPoints(points)
 	(topL, topR, botL, botR) = trapezoid
 

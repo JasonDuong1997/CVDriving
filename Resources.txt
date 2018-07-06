@@ -35,6 +35,8 @@ https://www.youtube.com/watch?v=VyLihutdsPk
 https://dspace5.zcu.cz/bitstream/11025/11945/1/Jang.pdf
     detecting lines with shadows casted on them
 
+
+
 ====== TESTING ============
 Photos
 https://kevinwojo.ifiles.wordpress.com/2014/08/side-of-the-road.jpgineFilter
@@ -47,19 +49,19 @@ GTAV
   - get rid of pedestrians and other drivers
   - spawn and use any motorbike
   - set time to "midday" when it's light out and least amount of shadows
+    Little Seoul: (-509.088, -764.486, 31.2167)
+    Highway: X: -2636.32 Y: -94.5579 Z: 18.2925
+
 
 ===== INSTALLING ==========
-    Python 3 for Windows
+Python 3 for Windows
 https://www.python.org/downloads/
-	download opencv3
+
+OpenCV (must match Python version number)
 https://www.solarianprogrammer.com/2016/09/17/install-opencv-3-with-python-3-on-windows/
 
-    Enhanced GTAV Native Trainer:
+Enhanced GTAV Native Trainer:
 https://www.gta5-mods.com/scripts/enhanced-native-trainer-zemanez-and-others
-Little Seoul
-Coordinates: (-509.088, -764.486, 31.2167)
-Highway: X: -2636.32 Y: -94.5579 Z: 18.2925
-==========================
 
 
 

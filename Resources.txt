@@ -1,3 +1,4 @@
+/****** RESOURCES USED *******/
 https://www.pyimagesearch.com/2017/09/11/object-detection-with-deep-learning-and-opencv/
 	Combining MobileNets and Single Shot Detectors  (both by Google)
 
@@ -9,7 +10,6 @@ https://github.com/tensorflow/models/tree/master/research/object_detection
 
 https://www.pyimagesearch.com/wp-content/uploads/2014/02/ImageSearchEngineResourceGuide.pdf
 	Beginner resource guide
-
 
 http://opencv-python-tutroals.readthedocs.io/en/latest/py_tutorials/py_setup/py_intro/py_intro.html
 	OpenCV Python INTRO [Start Here]
@@ -37,26 +37,16 @@ https://dspace5.zcu.cz/bitstream/11025/11945/1/Jang.pdf
 
 ====== TESTING ============
 Photos
-    https://kevinwojo.ifiles.wordpress.com/2014/08/side-of-the-road.jpgineFilter
+https://kevinwojo.ifiles.wordpress.com/2014/08/side-of-the-road.jpgineFilter
 
 Video
-    https://youtu.be/kQCYPeDhdns?t=182 (police dash cam)
+https://youtu.be/kQCYPeDhdns?t=182 (police dash cam)
 
 GTAV
-
-Demonstration
-1. Drawing lanes on paint (continuous and dashed)
-2. Still photos 
-3. Youtube video
-
-Questions
-1. Optimization (increase FPS)
-2. Merge similar lines into singular line
-    - check slope value with most lines
-        - check similar x's and y's 
-        - take average of all slopes, x's, and y's
-    "maximum gap distance before it becomes one line"
-
+-download GTAV Native trainer
+  - get rid of pedestrians and other drivers
+  - spawn and use any motorbike
+  - set time to "midday" when it's light out and least amount of shadows
 
 ===== INSTALLING ==========
     Python 3 for Windows
@@ -68,11 +58,12 @@ https://www.solarianprogrammer.com/2016/09/17/install-opencv-3-with-python-3-on-
 https://www.gta5-mods.com/scripts/enhanced-native-trainer-zemanez-and-others
 Little Seoul
 Coordinates: (-509.088, -764.486, 31.2167)
+Highway: X: -2636.32 Y: -94.5579 Z: 18.2925
+==========================
 
 
 
-
-MODIFIABLE VALUES
+/****** MODIFIABLE VALUES *******/
 [Globals]
 drive	        whether or not to apply autoinput
 police_dash	    settings for police cam video
@@ -81,9 +72,9 @@ police_dash	    settings for police cam video
 line_min	    minimum line length to be considered a line
 gap_max		    maximum gap between points to be considered a line
 
-[Color Selection]:
-lower		    lower bound for HSL color
-upper 		    upper bound for HSL color
+[Color Selections]:
+lower		    lower bound for color
+upper 		    upper bound for color
 
 [Edge Detection]:
 (#, #)		    Gaussian Blur kernel (must be odd numbers)
@@ -103,9 +94,28 @@ rel_tol		    Tolerance for comparing similarity between the two lines
 
 
 
-
-/****** REVIEW *****/
+/****** REVIEW ******/
 Color Selection:
 pros - can choose both yellow and white lanes and ignore other colors
-cons - have to know color range in HSL
-     - hard to find lanes in the shade
+     - can look at individual color channels
+cons - have to know color range in HSL, HSV, etc
+     - hard to white lanes in the shade
+
+Bird's Eye View:
+pros - can find the curvature of the lane
+     - never need to process the extraneous objects in the image
+cons - very sensitive to turns
+     - need a large field of view to accurately extract lane data
+
+
+
+/***** QUESTIONS *****/
+1. Optimization (increase FPS)
+     - use win32gui to capture frames
+2. Merge similar lines into singular line
+    - check slope value with most lines
+        - check similar x-ints and y-ints
+        - take average of all slopes, x-ints, and y-ints
+3. Finding lanes in the shade
+    - convert to HSV or HSL color space and single out individual channels
+      and play with the color thresholding to extract the lanes under low light

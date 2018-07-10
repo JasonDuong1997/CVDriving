@@ -51,7 +51,7 @@ GTAV
   - spawn and use any motorbike
   - set time to "midday" when it's light out and least amount of shadows
     Little Seoul: (-509.088, -764.486, 31.2167)
-    Highway: X: -2636.32 Y: -94.5579 Z: 18.2925
+    Highway: X: -2618.88 Y: -114.151 Z: 19.3077
 
 
 ===== INSTALLING ==========
@@ -108,8 +108,9 @@ cons - have to know color range in HSL, HSV, etc
 Bird's Eye View:
 pros - can find the curvature of the lane
      - never need to process the extraneous objects in the image
-cons - very sensitive to turns
+cons - very sensitive to turns or bumps
      - need a large field of view to accurately extract lane data
+     - bad with inclines or declines in the road
 
 
 

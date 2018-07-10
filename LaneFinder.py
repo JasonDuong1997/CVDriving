@@ -209,6 +209,8 @@ def ProcessImage(image, vertices):    # only look at region of interest
 	mask = np.zeros_like(total_edges)
 	cv2.fillPoly(mask, vertices, 255)
 	masked = cv2.bitwise_and(total_edges, mask)
+
+	cv2.imshow("Processed_Image", masked)
 	return masked
 
 

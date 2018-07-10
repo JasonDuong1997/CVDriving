@@ -74,6 +74,7 @@ police_dash	    settings for police cam video
 [Lines]:
 line_min	    minimum line length to be considered a line
 gap_max		    maximum gap between points to be considered a line
+renderCycle     number of frames to take the average line over
 
 [Color Selections]:
 lower		    lower bound for color

@@ -11,6 +11,7 @@ import traceback
 # GLOBAL VARIABLES
 drive = False
 police_dash = False
+
 hwnd = win32gui.FindWindow(None, "Grand Theft Auto V")
 rect = win32gui.GetWindowRect(hwnd)
 win_x = rect[0]
@@ -27,24 +28,82 @@ class LineList(list):
 		self.size += 1
 		self.append(item)
 
+class LineAverager():
+	def __init__(self):
+		self.size = 0
+		self.coordA = []
+		self.coordB = []
+		self.slope = []
+		self.y_int = []
+		self.currAvg = []
+
+	def addLine(self, coordA_n, coordB_n, slope_n, y_int_n):
+		self.size += 1
+		self.coordA.append(coordA_n)
+		self.coordB.append(coordB_n)
+		self.slope.append(slope_n)
+		self.y_int.append(y_int_n)
+
+	def average(self):
+		try:
+			print("Calculating AVERAGE")
+			coordA0_sum = 0
+			coordA1_sum = 0
+			coordB0_sum = 0
+			coordB1_sum = 0
+			for cA in self.coordA:
+				coordA0_sum += cA[0]
+				coordA1_sum += cA[1]
+			for cB in self.coordB:
+				coordB0_sum += cB[0]
+				coordB1_sum += cB[1]
+			coordA_avg = [int(coordA0_sum/self.size), int(coordA1_sum/self.size)]
+			coordB_avg = [int(coordB0_sum/self.size), int(coordB1_sum/self.size)]
+
+			slope_sum = 0
+			for s in self.slope:
+				slope_sum += s
+			slope_avg = slope_sum/self.size
+
+			y_int_sum = 0
+			for y in self.y_int:
+				y_int_sum += y
+			y_int_avg = y_int_sum/self.size
+
+			self.currAvg = [coordA_avg, coordB_avg, slope_avg, y_int_avg]
+			return coordA_avg, coordB_avg, slope_avg, y_int_avg
+		except:
+			print("ERROR: Could not calculate the average line.")
+			return [0,0], [0,0], 0, 0
+
+	def clearLists(self):
+		for i in range(0, self.size):
+			del self.coordA[0]
+			del self.coordB[0]
+			del self.slope[0]
+			del self.y_int[0]
+		self.size = 0
+
+
 def lineCountMax(lineCounts):
 	return lineCounts[1]
 
-def Lines(image):   # draw HoughLines 
+def Lines(image, frames, avgLine_L, avgLine_R):   # draw HoughLines
 	# 50, 30 for police cam
 	# 10, 50 for GTAV
 	if police_dash:
 		line_min = 40
 		gap_max = 50
 	else:
-		line_min = 20
+		line_min = 10
 		gap_max = 60
 	lines = cv2.HoughLinesP(image, 1, np.pi/180, 100, np.array([]), line_min, gap_max)
-
 	lineAggregator_L = LineList()  # list to hold the most common lines (LEFT LINE)
 	lineAggregator_R = LineList()  # list to hold the most common lines (RIGHT LINE)
 	lineCounts_L = LineList()      # list to hold the number of each line (LEFT LINE)
 	lineCounts_R = LineList()	   # list to hold the number of each line (RIGHT LINE)
+
+	renderCycle = 1  # number of frames to grab line averages over
 
 	try:    # add all lines to list and then pick out the 2 strongest lines
 		for line in lines:
@@ -54,15 +113,30 @@ def Lines(image):   # draw HoughLines
 		coord1_a, coord1_b, slope_L, y_int_L = LineFilter(lineAggregator_L, lineCounts_L)
 		coord2_a, coord2_b, slope_R, y_int_R = LineFilter(lineAggregator_R, lineCounts_R)
 
-		# updating ROI
-		x_van,y_van = FindVanishingPoint(slope_L, slope_R, y_int_L, y_int_R)
-		print("VANISHING POINTS: ({}, {})" .format(x_van, y_van))
-		cv2.circle(image, (int(x_van), int(y_van)), 10, (255,255,255), thickness=3)
+		avgLine_L.addLine(coord1_a, coord1_b, slope_L, y_int_L)
+		avgLine_R.addLine(coord2_a, coord2_b, slope_R, y_int_R)
 
-		cv2.line(image, (coord1_a[0], coord1_a[1]), (int(x_van), int(y_van)), (255,255,255), thickness=2)
-		cv2.line(image, (coord2_a[0], coord2_a[1]), (int(x_van), int(y_van)), (255,255,255), thickness=6)
+		if (frames % renderCycle == 0):
+			avgLine_L.average()
+			avgLine_R.average()
+			avgLine_L.clearLists()
+			avgLine_R.clearLists()
+		if (frames >= renderCycle):
+			# updating ROI
+			x_van,y_van = FindVanishingPoint(avgLine_L.currAvg[2], avgLine_R.currAvg[2], avgLine_L.currAvg[3], avgLine_R.currAvg[3])
+			cv2.circle(image, (int(x_van), int(y_van)), 10, (255,255,255), thickness=3)
 
-		return slope_L, slope_R, y_van
+			cv2.line(image, (avgLine_L.currAvg[0][0], avgLine_L.currAvg[0][1]), (int(x_van), int(y_van)), (255,255,255), thickness=2)
+			cv2.line(image, (avgLine_R.currAvg[0][0], avgLine_R.currAvg[0][1]), (int(x_van), int(y_van)), (255,255,255), thickness=6)
+		else:
+			# updating ROI
+			x_van,y_van = FindVanishingPoint(slope_L, slope_R, y_int_L, y_int_R)
+			cv2.circle(image, (int(x_van), int(y_van)), 10, (255,255,255), thickness=3)
+
+			cv2.line(image, (coord1_a[0], coord1_a[1]), (int(x_van), int(y_van)), (255,255,255), thickness=2)
+			cv2.line(image, (coord2_a[0], coord2_a[1]), (int(x_van), int(y_van)), (255,255,255), thickness=6)
+
+		return avgLine_L.currAvg[2], avgLine_R.currAvg[2], y_van
 	except Exception:
 		traceback.print_exc()
 		print("ERROR: No lines found")
@@ -135,9 +209,6 @@ def ProcessImage(image, vertices):    # only look at region of interest
 	mask = np.zeros_like(total_edges)
 	cv2.fillPoly(mask, vertices, 255)
 	masked = cv2.bitwise_and(total_edges, mask)
-
-	cv2.imshow("shadow", total_edges)
-
 	return masked
 
 
@@ -324,6 +395,9 @@ def main():
 
 	y_van = 11*win_h/50
 
+	avgLine_L = LineAverager()
+	avgLine_R = LineAverager()
+
 	for i in range(0,3):
 		print("On the count of 3: {}" .format(i))
 		time.sleep(.5)
@@ -345,7 +419,7 @@ def main():
 			processed_image = ProcessImage(image, [vertices])
 			#cv2.imshow("Image", np.hstack([image,image2]))
 
-			slope_L, slope_R, y_van = Lines(processed_image)
+			slope_L, slope_R, y_van = Lines(processed_image, frames, avgLine_L, avgLine_R)
 
 			if drive:
 				release_all_controls()

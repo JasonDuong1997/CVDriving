@@ -35,7 +35,8 @@ https://www.youtube.com/watch?v=VyLihutdsPk
 https://dspace5.zcu.cz/bitstream/11025/11945/1/Jang.pdf
     detecting lines with shadows casted on them
 
-
+https://www.quora.com/What-is-one-hot-encoding-and-when-is-it-used-in-data-science
+    1-hot encoding for data science
 
 ====== TESTING ============
 Photos

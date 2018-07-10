@@ -104,15 +104,24 @@ pros - can choose both yellow and white lanes and ignore other colors
      - can look at individual color channels
 cons - have to know color range in HSL, HSV, etc
      - hard to white lanes in the shade
+potential fixes - dynamic color thresholding based on time of day, road quality,
+                  and line quality
 
 Bird's Eye View:
 pros - can find the curvature of the lane
      - never need to process the extraneous objects in the image
+     - can be more aggressive thresholding
 cons - very sensitive to turns or bumps
+     - limited to gentle curves
      - need a large field of view to accurately extract lane data
      - bad with inclines or declines in the road
+potential fixes - dynamic source point finding to combat wobbling
 
-
+Averaging Lines across multiple Frames:
+pros - smoother lines only when lanes vary very little
+cons - laggy effect when lanes change by large amounts
+potential fixes - improve frames per second to sample at a higher frequency to
+                  get more accurate averages
 
 /***** QUESTIONS *****/
 1. Optimization (increase FPS)

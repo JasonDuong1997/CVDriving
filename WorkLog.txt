@@ -7,6 +7,15 @@ Winter18    15      (started project during beginning of winter quarter)
 07/03/18    4
 07/05/18    10
 07/09/18    5
+07/09/18    7 (reading and researching only)
 
-to-do (done): average the lines across multiple frames
-to-do: dynamic source points for BEV (bird's eye view)
+
+Done:
+-average the lines across multiple frames
+
+To-Do List:
+-dynamic source points for BEV (bird's eye view)
+    -work with 3rd person POV
+-weighted average for lines
+-mapping out the road
+-vertically stretch road

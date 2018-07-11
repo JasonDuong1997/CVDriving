@@ -19,3 +19,4 @@ To-Do List:
 -weighted average for lines
 -mapping out the road
 -vertically stretch road
+-finish PyGTAV tutorial 

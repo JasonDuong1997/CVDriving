@@ -38,6 +38,9 @@ https://dspace5.zcu.cz/bitstream/11025/11945/1/Jang.pdf
 https://www.quora.com/What-is-one-hot-encoding-and-when-is-it-used-in-data-science
     1-hot encoding for data science
 
+https://medium.com/@maxdeutsch/how-to-build-a-self-driving-car-in-one-month-d52df48f5b07
+    Nvidia self driving code walkthrough/blog
+
 ====== TESTING ============
 Photos
 https://kevinwojo.ifiles.wordpress.com/2014/08/side-of-the-road.jpgineFilter
@@ -55,11 +58,30 @@ GTAV
 
 
 ===== INSTALLING ==========
-Python 3 for Windows
-https://www.python.org/downloads/
+Python 3.5 (x64) for Windows
+https://www.python.org/downloads/release/python-350/
 
 OpenCV (must match Python version number)
-https://www.solarianprogrammer.com/2016/09/17/install-opencv-3-with-python-3-on-windows/
+python -m pip install opencv-python
+python -m pip install opencv-contrib-python
+
+Python Imaging Library
+python -m pip install Pillow
+
+PyAutoGui
+python -m pip install pyautogui
+
+PyWin32 (must match python number and OS bit-system)
+https://github.com/mhammond/pywin32/releases
+
+Nvidia Cuda 9.0
+https://developer.nvidia.com/cuda-90-download-archive
+
+Nvidia cuDNN (must match Cuda version)
+https://developer.nvidia.com/rdp/cudnn-download
+
+TensorFlow
+https://www.tensorflow.org/install/install_windows
 
 Enhanced GTAV Native Trainer:
 https://www.gta5-mods.com/scripts/enhanced-native-trainer-zemanez-and-others

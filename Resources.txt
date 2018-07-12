@@ -41,6 +41,9 @@ https://www.quora.com/What-is-one-hot-encoding-and-when-is-it-used-in-data-scien
 https://medium.com/@maxdeutsch/how-to-build-a-self-driving-car-in-one-month-d52df48f5b07
     Nvidia self driving code walkthrough/blog
 
+https://towardsdatascience.com/lane-detection-with-deep-learning-part-2-3ba559b5c5af
+    lane finding with convolutional neural network
+
 ====== TESTING ============
 Photos
 https://kevinwojo.ifiles.wordpress.com/2014/08/side-of-the-road.jpgineFilter

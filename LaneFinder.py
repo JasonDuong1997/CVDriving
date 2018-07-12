@@ -46,6 +46,7 @@ class LineAverager():
 
 	def average(self):
 		try:
+			# TODO: use weighted average
 			print("Calculating AVERAGE")
 			coordA0_sum = 0
 			coordA1_sum = 0

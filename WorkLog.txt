@@ -7,8 +7,9 @@ Winter18    15      (started project during beginning of winter quarter)
 07/03/18    4
 07/05/18    10
 07/09/18    5
-07/09/18    7 (reading and researching only)
-
+07/10/18    7 (reading and researching only)
+07/11/18    8.5
+07/12/18    6.5
 
 Done:
 -average the lines across multiple frames

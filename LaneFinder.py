@@ -354,39 +354,6 @@ def LineFilter(lineAggregator, lineCounts):  # remove unwanted lines
 	return coord_a, coord_b, slope_avg, y_int_avg
 
 
-############## Driving functions  ####################
-def applyGas(apply=True):
-	if (apply == True):
-		GInput.PressKey(GInput.Key.W)
-	else:
-		GInput.ReleaseKey(GInput.Key.W)
-
-
-def applyBreaks(apply=True):
-	if (apply == True):
-		GInput.PressKey(GInput.Key.S)
-	else:
-		GInput.ReleaseKey(GInput.Key.S)
-
-
-def steer_left():
-	GInput.ReleaseKey(GInput.Key.D)
-	GInput.PressKey(GInput.Key.A)
-
-
-def steer_right():
-	GInput.ReleaseKey(GInput.Key.A)
-	GInput.PressKey(GInput.Key.D)
-
-def release_all_controls():
-	#GInput.ReleaseKey(GInput.Key.W)
-	GInput.ReleaseKey(GInput.Key.A)
-	GInput.ReleaseKey(GInput.Key.S)
-	GInput.ReleaseKey(GInput.Key.D)
-########################################################
-
-
-
 def main(): 
 	frames = 0.0
 	elapsed = time.time()
@@ -423,19 +390,6 @@ def main():
 			#cv2.imshow("Image", np.hstack([image,image2]))
 
 			slope_L, slope_R, y_van = Lines(processed_image, frames, avgLine_L, avgLine_R)
-
-			if drive:
-				release_all_controls()
-			if (math.fabs(slope_L) > math.fabs(slope_R)):
-				cv2.arrowedLine(processed_image, (20, 20), (40, 20), (255, 255, 255), thickness=2, tipLength=.3)
-				if drive:
-					steer_right()
-					#applyGas()
-			elif (math.fabs(slope_L) < math.fabs(slope_R)):
-				cv2.arrowedLine(processed_image, (40, 20), (20, 20), (255, 255, 255), thickness=2, tipLength=.3)
-				if drive:
-					steer_left()
-					#applyGas()
 
 			cv2.imshow("Image", processed_image)
 

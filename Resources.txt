@@ -44,6 +44,9 @@ https://medium.com/@maxdeutsch/how-to-build-a-self-driving-car-in-one-month-d52d
 https://towardsdatascience.com/lane-detection-with-deep-learning-part-2-3ba559b5c5af
     lane finding with convolutional neural network
 
+https://adeshpande3.github.io/adeshpande3.github.io/A-Beginner's-Guide-To-Understanding-Convolutional-Neural-Networks/
+    intro to convolutional neural networks with visual aids
+
 ====== TESTING ============
 Photos
 https://kevinwojo.ifiles.wordpress.com/2014/08/side-of-the-road.jpgineFilter
@@ -54,10 +57,14 @@ https://youtu.be/kQCYPeDhdns?t=182 (police dash cam)
 GTAV
 -download GTAV Native trainer
   - get rid of pedestrians and other drivers
-  - spawn and use any motorbike
+  - spawn and use a car (any vehicle with the camera held constant will do)
   - set time to "midday" when it's light out and least amount of shadows
-    Little Seoul: (-509.088, -764.486, 31.2167)
-    Highway: X: -2618.88 Y: -114.151 Z: 19.3077
+    Locations:
+        Highway: X: -2618.88 Y: -114.151 Z: 19.3077
+  Note:
+    GTAV Automatic updates will break the downloaded mods, so if you don't want to wait for the
+    mod developer to update their mod to the newer version, keep a backup of the working GTAV version
+    and follow these steps: https://www.lcpdfr.com/forums/topic/52764-how-to-avoid-rockstar-updates/
 
 
 ===== INSTALLING ==========

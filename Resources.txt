@@ -47,6 +47,9 @@ https://towardsdatascience.com/lane-detection-with-deep-learning-part-2-3ba559b5
 https://adeshpande3.github.io/adeshpande3.github.io/A-Beginner's-Guide-To-Understanding-Convolutional-Neural-Networks/
     intro to convolutional neural networks with visual aids
 
+https://www.youtube.com/watch?v=AgkfIQ4IGaM
+    visualization of what a conv net is doing using a deconvolution
+
 ====== TESTING ============
 Photos
 https://kevinwojo.ifiles.wordpress.com/2014/08/side-of-the-road.jpgineFilter
@@ -155,6 +158,7 @@ cons - laggy effect when lanes change by large amounts
 potential fixes - improve frames per second to sample at a higher frequency to
                   get more accurate averages
 
+
 /***** QUESTIONS *****/
 1. Optimization (increase FPS)
      - use win32gui to capture frames
@@ -165,3 +169,5 @@ potential fixes - improve frames per second to sample at a higher frequency to
 3. Finding lanes in the shade
     - convert to HSV or HSL color space and single out individual channels
       and play with the color thresholding to extract the lanes under low light
+4. Stretching Out Dataset
+    - can apply horizontal/vertical flips, translations, etc to multiply the dataset size

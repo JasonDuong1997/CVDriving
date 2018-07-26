@@ -11,7 +11,7 @@ Winter18    15      (started project during beginning of winter quarter)
 07/11/18    8.5
 07/12/18    6.5
 07/24/18    4.5
-09/25/18    2.0
+07/25/18    6.0
 
 Done:
 -average the lines across multiple frames
@@ -26,3 +26,4 @@ To-Do List:
 -vertically stretch road
 -collect 100,000 samples
 -feed processed lane images to convnet
+-fix re-shape error

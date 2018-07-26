@@ -53,6 +53,9 @@ https://www.youtube.com/watch?v=AgkfIQ4IGaM
 https://papers.nips.cc/paper/4824-imagenet-classification-with-deep-convolutional-neural-networks.pdf
     AlexNet paper
 
+https://www.datacamp.com/community/tutorials/cnn-tensorflow-python
+    convolutional neural network with tensorflow walkthrough
+
 ====== TESTING ============
 Photos
 https://kevinwojo.ifiles.wordpress.com/2014/08/side-of-the-road.jpgineFilter

@@ -50,6 +50,9 @@ https://adeshpande3.github.io/adeshpande3.github.io/A-Beginner's-Guide-To-Unders
 https://www.youtube.com/watch?v=AgkfIQ4IGaM
     visualization of what a conv net is doing using a deconvolution
 
+https://papers.nips.cc/paper/4824-imagenet-classification-with-deep-convolutional-neural-networks.pdf
+    AlexNet paper
+
 ====== TESTING ============
 Photos
 https://kevinwojo.ifiles.wordpress.com/2014/08/side-of-the-road.jpgineFilter
@@ -101,7 +104,7 @@ https://www.gta5-mods.com/scripts/enhanced-native-trainer-zemanez-and-others
 
 
 
-/****** MODIFIABLE VALUES *******/
+/****** MODIFIABLE VALUES (in LineFinder.py) *******/
 [Globals]
 drive	        whether or not to apply autoinput
 police_dash	    settings for police cam video
@@ -157,6 +160,13 @@ pros - smoother lines only when lanes vary very little
 cons - laggy effect when lanes change by large amounts
 potential fixes - improve frames per second to sample at a higher frequency to
                   get more accurate averages
+
+Using Convolutional Neural Network:
+pros - can model after human driving
+cons - need very large data set
+     - subject to overfitting
+potential fixes - using the non-rounded values for steering (PWM?)
+
 
 
 /***** QUESTIONS *****/

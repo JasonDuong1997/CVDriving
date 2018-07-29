@@ -6,6 +6,8 @@ from GameControls import PressKey, ReleaseKey, W, A, D
 from KeyLogger import KeyCheck
 import win32gui
 from AlexNet_Model.TrainData import alexnet
+import tensorflow as tf
+
 
 hwnd = win32gui.FindWindow(None, "Grand Theft Auto V")
 rect = win32gui.GetWindowRect(hwnd)
@@ -14,8 +16,11 @@ win_y = rect[1]
 win_w = rect[2] - win_x
 win_h = rect[3] - win_y
 
+
 WIDTH = int(win_w/10)
 HEIGHT = int(win_h/10)
+
+
 LR = 1e-3		# learning rate
 EPOCHS = 8
 MODEL_NAME = "pygta5-SmartCar-{}-{}-{}-epochs.model" .format(LR, "alexnet", EPOCHS)
@@ -62,12 +67,14 @@ def main():
 				grey = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 				screen = cv2.resize(grey, (WIDTH,HEIGHT))
 
+
 				print("loop took {} seconds " .format(time.time()-last_time))
 				last_time = time.time()
 
-				prediction = model.predict([screen.reshape(WIDTH,HEIGHT,1)])[0]
+				prediction = model.predict(screen.reshape(1, WIDTH, HEIGHT, 1))[0]
 				moves = list(np.around(prediction))
 				print(moves, prediction)
+
 
 				if moves == [1,0,0]:
 					left()
@@ -75,6 +82,7 @@ def main():
 					straight()
 				elif moves == [0,0,1]:
 					right()
+
 
 			keys = KeyCheck()
 			if 'T' in keys:

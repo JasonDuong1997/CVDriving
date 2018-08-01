@@ -7,7 +7,7 @@ training_data = np.load("training_data_balanced.npy")
 
 learning_rate = 1e-3
 batch_size = 128  	# number of images per cycle (in the power of 2 because # of physical processors is similar)
-n_epochs = 10	 	# number of epochs
+n_epochs = 8	 	# number of epochs
 n_outputs = 3	  	# number of outputs
 pool_s = 2			# maxpool stride
 
@@ -35,24 +35,38 @@ def ConvNN_Train(x):
 	train_y = y_set[:-500]
 	test_y = y_set[-500:]
 
-	with tf.Session() as sess:
+	print("train/test X: {}, {}" .format(len(train_x), len(test_x)))
+	print("train/test Y: {}, {}" .format(len(train_y), len(test_y)))
+
+	config = tf.ConfigProto()
+	config.gpu_options.allow_growth = True
+
+	with tf.Session(config=config) as sess:
 		sess.run(tf.global_variables_initializer())
+		saver = tf.train.Saver()
 
 		# training
 		for epoch in range(n_epochs):
 			epoch_loss = 0
-			for batch in range(int(len(training_data)/batch_size)):
-				batch_x = train_x[batch*batch_size:min((batch+1)*batch_size, len(train_x))]
-				batch_y = train_y[batch*batch_size:min((batch+1)*batch_size, len(train_y))]
+			for batch in range(int(len(train_x)/batch_size)):
+				batch_x = train_x[batch*batch_size:min((batch+1)*batch_size, len(train_x)-1)]
+				batch_y = train_y[batch*batch_size:min((batch+1)*batch_size, len(train_y)-1)]
 
 				opt = sess.run(optimizer, feed_dict={x: batch_x, y: batch_y})
 				loss, acc = sess.run([cost, accuracy], feed_dict={x: batch_x, y: batch_y})
 
 				epoch_loss += loss
-			print("Epoch {}/{} with loss: {}." .format(epoch, n_epochs, epoch_loss))
 
-		# testing if correct or not
-		epoch_acc = sess.run(accuracy, feed_dict={x: test_x, y: test_y})
-		print("Testing Accuracy: {}" .format(epoch_acc))
+			epoch_acc = sess.run(accuracy, feed_dict={x: test_x, y: test_y})
+			print("Epoch {}/{}." .format(epoch+1, n_epochs))
+			print("Loss: {}, Accuracy: {}" .format(epoch_loss, epoch_acc))
 
-ConvNN_Train(x)
+		print("\nTraining Done!")
+		print("Final Accuracy: {}" .format(accuracy.eval({x: test_x, y: test_y})))
+
+		# Saving model
+		print("Saving Model")
+		saver.save(sess, "./CNN_Model")
+
+if __name__ == '__main__':
+	ConvNN_Train(x)

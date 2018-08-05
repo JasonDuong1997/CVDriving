@@ -56,6 +56,9 @@ https://papers.nips.cc/paper/4824-imagenet-classification-with-deep-convolutiona
 https://www.datacamp.com/community/tutorials/cnn-tensorflow-python
     convolutional neural network with tensorflow walkthrough
 
+https://arxiv.org/pdf/1604.07316.pdf
+    Nvidia Self Driving CNN
+
 ====== TESTING ============
 Photos
 https://kevinwojo.ifiles.wordpress.com/2014/08/side-of-the-road.jpgineFilter

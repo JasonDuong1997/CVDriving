@@ -2,18 +2,22 @@ import pandas as pd
 from collections import Counter
 from random import shuffle
 import numpy as np
+import tensorflow as tf
 
 data_version = "yuv"
-train_data = np.load("training_data_{}.npy" .format(data_version))
+train_data = np.load("training_data_yuv_balanced.npy")
+
+df = pd.DataFrame(train_data)
+print(Counter(df[1].apply(str)))
 
 def full_shuffle():
-	df = pd.DataFrame(train_data)
-	print(df.head())
-	print(Counter(df[1].apply(str)))
-
 	lefts = []
 	rights = []
 	forwards = []
+
+	print("before shuffle {}" .format(len(train_data)))
+	np.random.shuffle(train_data)
+	print("after shuffle {}" .format(len(train_data)))
 
 	for data in train_data:
 		image = data[0]
@@ -27,28 +31,18 @@ def full_shuffle():
 			rights.append([image, choice])
 
 	counts = [len(lefts), len(forwards), len(rights)]
-	max_count = min(counts)
+	print(counts)
+	min_count = min(counts)
 
-	lefts = lefts[:max_count]
-	forwards = forwards[:max_count]
-	rights = rights[:max_count]
+	lefts = lefts[:min_count]
+	forwards = forwards[:int(min_count*1.8)]
+	rights = rights[:max(int(min_count*1.2), len(rights))]
 
 	total_data = lefts + forwards + rights
 	print(len(total_data))
 
 	shuffle(total_data)
-	np.save("training_data_{}_balanced.npy" .format(data_version), total_data)
-
-	"""
-	forwards = forwards[:len(lefts)][:len(rights)]
-	lefts = lefts[:len(forwards)]
-	rights = rights[:len(rights)]
-	
-	final_data = forwards + lefts + rights
-	print(len(final_data))
-	
-	np.save("training_data_balanced.npy", final_data)
-	"""
+	np.save("training_data_yuv_balanced", total_data)
 
 def partial_shuffle():
 	size_of_data = len(train_data)
@@ -64,4 +58,3 @@ def partial_shuffle():
 	np.save("training_data_shuffled.npy", training_data)
 	print("Training data saved!")
 
-partial_shuffle()

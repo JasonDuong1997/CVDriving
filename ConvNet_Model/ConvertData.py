@@ -8,20 +8,12 @@ print("Data length: {}" .format(len(training_data_file)))
 data_version = "yuv"
 file_name = "training_data_{}.npy" .format(data_version)
 
-"""
-if os.path.isfile(file_name):
-	print("File exists,. Loading previous data.")
-	training_data = list(np.load(file_name))
-else:
-	print("File does not exist. Starting fresh.")
-	training_data = []
-"""
-
-training_data = np.load("training_data_yuv.npy")
-print("YUV SIZE: {}" .format(len(training_data)))
 
 def GREY2YUV():
 	count = 0
+
+	training_data = []
+
 	for td in training_data_file:
 		img = td[0]
 		key = td[1]
@@ -44,3 +36,6 @@ def fix():
 	training_data_file[65999][0] = grey
 
 	np.save("training_data.npy", training_data_file)
+
+
+GREY2YUV()

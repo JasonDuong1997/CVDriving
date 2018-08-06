@@ -32,7 +32,7 @@ def keys_to_output(keys):
 	return output
 
 
-file_name = "training_data.npy"
+file_name = "test_data_grey.npy"
 
 if os.path.isfile(file_name):
 	print("File exists, loading previous data")

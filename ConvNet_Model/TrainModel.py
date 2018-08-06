@@ -5,13 +5,13 @@ import tflearn
 import numpy as np
 
 data_version = "yuv"
-training_data = np.load("training_data_shuffled.npy")
+training_data = np.load("training_data_yuv_balanced.npy")
 testing_data = np.load("test_data_yuv.npy")
 
-learning_rate = 5e-5
-test_size = int(len(training_data)*0.03)
+learning_rate = 5e-4
+test_size = int(len(training_data)*0.12)
 batch_size = 128  	# number of images per cycle (in the power of 2 because # of physical processors is similar)
-n_epochs = 60	 	# number of epochs
+n_epochs = 180	 	# number of epochs
 n_outputs = 3	  	# number of outputs
 pool_s = 2			# maxpool stride
 
@@ -33,28 +33,28 @@ def ConvNN_Train(x):
 	else:
 		prediction = ConvNN_Model(x, WIDTH, HEIGHT, n_outputs, pool_s)
 
-
 	cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits_v2(logits=prediction, labels=y))
-
 	optimizer = tf.train.AdamOptimizer(learning_rate=learning_rate).minimize(cost)
 
 	correct = tf.equal(tf.argmax(prediction, 1), tf.argmax(y, 1))
 	accuracy = tf.reduce_mean(tf.cast(correct, "float"))
 
 	# separating out the data into training and validation set
+	"""
 	if (data_version == "yuv"):
 		train_x = [i[0] for i in training_data]
 		train_y = [i[1] for i in training_data]
 		test_x = [i[0] for i in testing_data]
 		test_y = [i[1] for i in testing_data]
 	else:
-		x_set = [i[0] for i in training_data]
-		train_x = x_set[:-test_size]
-		test_x = x_set[-test_size:]
+	"""
+	x_set = [i[0] for i in training_data]
+	train_x = x_set[:-test_size]
+	test_x = x_set[-test_size:]
 
-		y_set = [i[1] for i in training_data]
-		train_y = y_set[:-test_size]
-		test_y = y_set[-test_size:]
+	y_set = [i[1] for i in training_data]
+	train_y = y_set[:-test_size]
+	test_y = y_set[-test_size:]
 
 	print("train/test X: {}, {}" .format(len(train_x), len(test_x)))
 	print("train/test Y: {}, {}" .format(len(train_y), len(test_y)))
@@ -66,11 +66,10 @@ def ConvNN_Train(x):
 		sess.run(tf.global_variables_initializer())
 		saver = tf.train.Saver()
 
-		running_acc = 0
-
 		# training
 		for epoch in range(n_epochs):
 			epoch_loss = 0
+			running_acc = 0
 			for batch in range(int(len(train_x)/batch_size)):
 				batch_x = train_x[batch*batch_size:min((batch+1)*batch_size, len(train_x)-1)]
 

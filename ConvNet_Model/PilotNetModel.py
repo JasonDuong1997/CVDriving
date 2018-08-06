@@ -89,10 +89,10 @@ def PilotNet_Model(x, WIDTH, HEIGHT, n_outputs, pool_s=2):
 	flat_img = tf.reshape(conv5, shape=[-1, W_fc1.get_shape().as_list()[0]])
 	print("Reshape Size: {}" .format(flat_img.get_shape()))
 	fc1 = relu(tf.matmul(flat_img, W_fc1) + B_fc1)
-	fc1 = dropout(fc1, 0.5)
+	fc1 = dropout(fc1, 0.4)
 	print("FC1 Size: {}" .format(fc1.get_shape()))
 	fc2 = relu(tf.matmul(fc1, W_fc2) + B_fc2)
-	fc2 = dropout(fc2, 0.3)
+	fc2 = dropout(fc2, 0.4)
 	fc3 = relu(tf.matmul(fc2, W_fc3) + B_fc3)
 
 	output = tf.matmul(fc3, W_out) + B_out

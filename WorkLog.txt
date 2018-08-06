@@ -15,7 +15,7 @@ Winter18    15      (started project during beginning of winter quarter)
 07/30/18    1.0
 07/31/18    7.0
 08/04/18    4.0
-08/05/18    8.5
+08/05/18    11.5
 
 Done:
 -average the lines across multiple frames

@@ -4,8 +4,14 @@ import cv2
 train_data = np.load("training_data.npy")
 print(len(train_data))
 def main():
-	for i in range(100000, len(train_data)):
-		print(train_data[i][1])
+	for td in train_data:
+		cv2.imshow("image", td[0])
+		print(td[1])
+
+
+		if cv2.waitKey(25) & 0xFF == ord('q'):
+			cv2.destroyAllWindows()
+			break
 
 if __name__ == "__main__":
 	main()

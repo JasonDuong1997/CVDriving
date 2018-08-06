@@ -17,10 +17,10 @@ def relu(x):
 def max_pool2d(x, kernel=2):
 	return tf.nn.max_pool(x, ksize=[1, kernel,kernel, 1], strides=[1, kernel,kernel, 1], padding="SAME")
 
-def dropout(x, keep_rate=0.5):
-	return tf.layers.dropout(x, rate=keep_rate)
+def dropout(x, drop_rate=0.5):
+	return tf.layers.dropout(x, rate=drop_rate)
 
-def ConvNN_Model(x, WIDTH, HEIGHT, n_outputs, pool_s=2):
+def PilotNet_Model(x, WIDTH, HEIGHT, n_outputs, pool_s=2):
 	W_fc_input = 8*10
 	print(W_fc_input*64)
 	# DEFINING WEIGHTS
@@ -33,7 +33,7 @@ def ConvNN_Model(x, WIDTH, HEIGHT, n_outputs, pool_s=2):
 	W_conv4 = tf.Variable(tf.random_normal([3,3, 48, 64]), name="W_conv4")
 	W_conv5 = tf.Variable(tf.random_normal([3,3, 64, 64]), name="W_conv5")
 	W_fc1 =  tf.Variable(tf.random_normal([W_fc_input*64, 1164]), name="W_fc1")
-	W_fc2 =  tf.Variable(tf.random_normal([1024, 100]), name="W_fc2")
+	W_fc2 =  tf.Variable(tf.random_normal([1164, 100]), name="W_fc2")
 	W_fc3 =  tf.Variable(tf.random_normal([100, 50]), name="W_fc3")
 	W_out = tf.Variable(tf.random_normal([50, n_outputs]), name="W_out")
 	# DEFINING BIASES
@@ -50,8 +50,7 @@ def ConvNN_Model(x, WIDTH, HEIGHT, n_outputs, pool_s=2):
 	B_fc3 = tf.Variable(tf.random_normal([50]), name="B_fc3")
 	B_out = tf.Variable(tf.random_normal([n_outputs]), name="B_out")
 
-	# todo: match architecture with Nvidia's PilotNet
-	# DEFINING ARCHITECTURE
+	# DEFINING PilotNet ARCHITECTURE
 	# Input Image(width = 80, height = 62, YUV) ->
 	# Normalization ->
 	# Convolution(5x5) -> Relu ->
@@ -88,10 +87,12 @@ def ConvNN_Model(x, WIDTH, HEIGHT, n_outputs, pool_s=2):
 
 	# flatten to 1 dimension for fully connected layers
 	flat_img = tf.reshape(conv5, shape=[-1, W_fc1.get_shape().as_list()[0]])
+	print("Reshape Size: {}" .format(flat_img.get_shape()))
 	fc1 = relu(tf.matmul(flat_img, W_fc1) + B_fc1)
 	fc1 = dropout(fc1, 0.5)
+	print("FC1 Size: {}" .format(fc1.get_shape()))
 	fc2 = relu(tf.matmul(fc1, W_fc2) + B_fc2)
-	fc2 = dropout(fc2, 0.5)
+	fc2 = dropout(fc2, 0.3)
 	fc3 = relu(tf.matmul(fc2, W_fc3) + B_fc3)
 
 	output = tf.matmul(fc3, W_out) + B_out

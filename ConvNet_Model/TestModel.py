@@ -27,6 +27,8 @@ HEIGHT = int(win_h/10)
 x = tf.placeholder("float", [None, HEIGHT, WIDTH])
 model = tf.nn.softmax(ConvNN_Model(x, WIDTH, HEIGHT, n_outputs, pool_s))
 
+CNN_VERSION = ""
+
 def straight():
 	ReleaseKey(A)
 	ReleaseKey(D)
@@ -56,7 +58,7 @@ def main():
 	config.gpu_options.allow_growth = True	# allow dynamic allocation of memory
 	with tf.Session(config=config) as sess:
 		sess.run(tf.global_variables_initializer())
-		saver = tf.train.import_meta_graph("./CNN_Model.meta")
+		saver = tf.train.import_meta_graph("./CNN_Model{}.meta" .format(CNN_VERSION))
 		saver.restore(sess, tf.train.latest_checkpoint("./"))
 
 		for i in range(0,3):

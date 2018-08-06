@@ -3,7 +3,8 @@ from collections import Counter
 from random import shuffle
 import numpy as np
 
-train_data = np.load("training_data.npy")
+data_version = "yuv"
+train_data = np.load("training_data_{}.npy" .format(data_version))
 
 df = pd.DataFrame(train_data)
 print(df.head())
@@ -25,8 +26,19 @@ for data in train_data:
 	elif (choice == [0,0,1]):
 		rights.append([image, choice])
 
-lengths = [len(lefts), len(forwards), len(rights)]
-print(np.argmax(lengths))
+counts = [len(lefts), len(forwards), len(rights)]
+max_count = min(counts)
+
+lefts = lefts[:max_count]
+forwards = forwards[:max_count]
+rights = rights[:max_count]
+
+total_data = lefts + forwards + rights
+print(len(total_data))
+
+shuffle(total_data)
+np.save("training_data_{}_balanced.npy" .format(data_version), total_data)
+
 """
 forwards = forwards[:len(lefts)][:len(rights)]
 lefts = lefts[:len(forwards)]

@@ -15,6 +15,7 @@ Winter18    15      (started project during beginning of winter quarter)
 07/30/18    1.0
 07/31/18    7.0
 08/04/18    4.0
+08/05/18    3.5
 
 Done:
 -average the lines across multiple frames
@@ -22,13 +23,15 @@ Done:
 -finish 30 day blog walkthrough
 -fix re-shape error
 -created cnn with save and load functions
+-tweak cnn hyperparameters and add dropout nodes
+-feed processed lane images to convnet
+-implemented PilotNet
 
-To-Do List:
+TODO List:
 -dynamic source points for BEV (bird's eye view)
     -work with 3rd person POV
 -weighted average for lines
+-drop outlier lanes when they're too off
 -mapping out the road
 -vertically stretch road
 -collect 100,000 samples
--feed processed lane images to convnet
--tweak cnn hyperparameters and add dropout nodes

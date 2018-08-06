@@ -57,7 +57,11 @@ https://www.datacamp.com/community/tutorials/cnn-tensorflow-python
     convolutional neural network with tensorflow walkthrough
 
 https://arxiv.org/pdf/1604.07316.pdf
-    Nvidia Self Driving CNN
+    Nvidia Self Driving CNN (PilotNet)
+
+https://medium.com/data-science-group-iitr/loss-functions-and-optimization-algorithms-demystified-bb92daff331c
+    Loss and Optimization functions
+
 
 ====== TESTING ============
 Photos

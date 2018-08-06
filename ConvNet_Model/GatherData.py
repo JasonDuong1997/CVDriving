@@ -14,7 +14,7 @@ win_y = rect[1]
 win_w = rect[2] - win_x
 win_h = rect[3] - win_y
 
-image_type = "yuv"
+image_type = "grey"
 data_version = "yuv"
 
 # convert to 1-hot array
@@ -26,17 +26,18 @@ def keys_to_output(keys):
 		output[0] = 1
 	elif 'D' in keys:
 		output[2] = 1
-	elif 'W' in keys:
-		output[1] = 1
+#	elif 'W' in keys:
+#		output[1] = 1
 
 	return output
 
 
-file_name = "training_data_{}.npy" .format(data_version)
+file_name = "training_data.npy"
 
 if os.path.isfile(file_name):
 	print("File exists, loading previous data")
 	training_data = list(np.load(file_name))
+	print(len(training_data))
 else:
 	print("File does not exist. Starting fresh")
 	training_data = []
@@ -46,6 +47,8 @@ def main():
 	elapsed = time.time()
 	last_time = time.time()
 	frame_loop = 0
+
+	save_count = 0
 
 	y_van = 11*win_h/50
 
@@ -69,20 +72,25 @@ def main():
 
 			keys = KeyCheck()
 			output = keys_to_output(keys)
-			training_data.append([screen, output])
 
-			print("loop took {} seconds " .format(time.time()-last_time))
+			if (output != [0, 0, 0]):
+				training_data.append([screen, output])
+				save_count += 1
+
+			#print("loop took {} seconds " .format(time.time()-last_time))
 			last_time = time.time()
 
-			if (len(training_data) % 500 == 0):
+			if (save_count == 500):
 				print(len(training_data))
-				np.save(file_name, training_data)
-
-
+				# np.save(file_name, training_data)
+				break
 
 			# for counting the number of frames
 			frames = frames + 1
-			if (frames == 1000):
+			if (frames == 2000):
+				print(len(training_data))
+				print("Frames Saved: {}" .format(save_count))
+				np.save(file_name, training_data)
 				break
 
 			print("Number of frames: {} " .format(frames))

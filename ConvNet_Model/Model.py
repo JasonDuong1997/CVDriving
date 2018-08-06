@@ -40,7 +40,7 @@ def ConvNN_Model(x, WIDTH, HEIGHT, n_outputs, pool_s=2):
 	# Conv: [# number of filters]
 	# FC:   [# number of filters]
 	# Out:  [# of outputs]
-	B_conv1 = tf.Variable(tf.random_normal([16]), name="B_conv1")
+	B_conv1 = tf.Variable(tf.random_normal([24]), name="B_conv1")
 	B_conv2 = tf.Variable(tf.random_normal([32]), name="B_conv2")
 	B_conv3 = tf.Variable(tf.random_normal([48]), name="B_conv3")
 	B_conv4 = tf.Variable(tf.random_normal([64]), name="B_conv4")

@@ -62,6 +62,9 @@ https://arxiv.org/pdf/1604.07316.pdf
 https://medium.com/data-science-group-iitr/loss-functions-and-optimization-algorithms-demystified-bb92daff331c
     Loss and Optimization functions
 
+https://towardsdatascience.com/batch-normalization-in-neural-networks-1ac91516821c
+https://www.jeremyjordan.me/batch-normalization/
+    Batch normalization
 
 ====== TESTING ============
 Photos
@@ -176,6 +179,11 @@ pros - can model after human driving
 cons - need very large data set
      - subject to overfitting
 potential fixes - using the non-rounded values for steering (PWM?)
+- Overfitting?
+    -reduce learning rate
+    -dropout layers
+    -batch normalization
+    -check training data for shuffled/balanced classes and representative validation set
 
 
 

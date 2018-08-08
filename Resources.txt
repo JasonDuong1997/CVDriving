@@ -57,7 +57,7 @@ https://www.datacamp.com/community/tutorials/cnn-tensorflow-python
     convolutional neural network with tensorflow walkthrough
 
 https://arxiv.org/pdf/1604.07316.pdf
-    Nvidia Self Driving CNN (PilotNet)
+    Nvidia Self Driving CNN (PilotNet) paper
 
 https://medium.com/data-science-group-iitr/loss-functions-and-optimization-algorithms-demystified-bb92daff331c
     Loss and Optimization functions
@@ -65,6 +65,9 @@ https://medium.com/data-science-group-iitr/loss-functions-and-optimization-algor
 https://towardsdatascience.com/batch-normalization-in-neural-networks-1ac91516821c
 https://www.jeremyjordan.me/batch-normalization/
     Batch normalization
+
+https://github.com/udacity/self-driving-car/tree/master/datasets
+    Udacity autonomous driving dataset
 
 ====== TESTING ============
 Photos
@@ -199,3 +202,28 @@ potential fixes - using the non-rounded values for steering (PWM?)
       and play with the color thresholding to extract the lanes under low light
 4. Stretching Out Dataset
     - can apply horizontal/vertical flips, translations, etc to multiply the dataset size
+
+
+
+
+Convolutional Neural Net Issues
+1. Training Data
+    -gathered 100,000 data points from test route
+    -balanced out images based on ratios  [left: 1.0, straight: 1.8, right, 1.2]
+    -total balanced data ~33,000 data points
+    -shuffled data
+    -split into training data and validation set at 88% and 12%
+    -batch size 128
+2. Neural Network Architecture
+    -pulled heavily from PilotNet
+    -modified with more normalization between layers and dropout layers
+    -used cross entropy loss function instead of MSE from PilotNet
+    -input image size: [width = 80, height = 62, channels = 3] in YUV
+    -FC layers   size: [width = 10, height = 8,  channels = 64]
+
+Problems:
+-validation accuracy stays at ~50%
+-loss function choice may not be best
+
+
+

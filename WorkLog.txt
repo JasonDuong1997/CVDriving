@@ -18,7 +18,8 @@ Winter18    15      (started project during beginning of winter quarter)
 08/05/18    11.5
 08/06/18    4.0
 08/08/18    10.5
-08/09/19    4
+08/09/18    4.0
+08/29/18    5.0     (figuring out ROS api)
 
 Done:
 -average the lines across multiple frames

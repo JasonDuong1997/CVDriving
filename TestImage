@@ -1,0 +1,32 @@
+import time
+
+import cv2
+import numpy as np
+from PIL import Image
+
+# load npy file
+# convert to uint8
+# reshape (height, width, channels)
+
+def resize(src_img):
+	resized_img = cv2.resize(src_img, dsize=(80,60))
+	return resized_img
+
+
+def main():
+	image_list = np.load("udacity_training_data_resized.npy", encoding="latin1")
+	print("Finished loading!")
+
+	while (True):
+		count = 0
+		for image_item in image_list:
+			font = cv2.FONT_HERSHEY_SIMPLEX
+			cv2.putText(image_item[0], "Steering Angle: " + str(float(image_item[1])*-360), (5,10), font, .1, (0,0,255), 1 , cv2.LINE_AA)
+			cv2.imshow("image", image_item[0])
+			count += 1
+			print("Frame: {} Steering Angle: {} \n" .format(count, -1*float(image_item[1])*360))
+			if cv2.waitKey(25) & 0xFF == ord('q'):
+				cv2.destroyAllWindows()
+				exit(1)
+
+main()

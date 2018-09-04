@@ -96,7 +96,7 @@ def main():
 		for j in range(len(steering_list)):
 			if (sec_key == steering_list[j][0]):
 				if(steering_list[j][1] >= nsec_key):
-					final_data.append([image_list[i][2], steering_list[j][2]])
+					final_data.append([image_list[i][2], float(steering_list[j][2])])
 					count += 1
 					print("Match Count: {}" .format(count))	
 					break

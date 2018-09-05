@@ -4,10 +4,10 @@ import numpy as np
 
 training_data = np.load("udacity_trainingData_processed.npy")
 
-learning_rate = 1e-4
+learning_rate = 5e-4
 test_size = int(len(training_data)*0.12)
 batch_size = 128  	# number of images per cycle (in the power of 2 because # of physical processors is similar)
-n_epochs = 8	 	# number of epochs
+n_epochs = 120	 	# number of epochs
 n_outputs = 1	  	# number of outputs
 pool_s = 2			# maxpool stride
 
@@ -22,12 +22,9 @@ CNN_VERSION = "1.1"
 PNN_VERSION = "1.0"
 
 
-
-
-
 def ConvNN_Train(x):
 	prediction = PilotNetV2_Model(x, WIDTH, HEIGHT, n_outputs, pool_s)
-	y_ = y
+
 	training_variables = tf.trainable_variables()
 
 	# OPERATIONS
@@ -37,9 +34,6 @@ def ConvNN_Train(x):
 	update_ops = tf.get_collection(tf.GraphKeys.UPDATE_OPS)
 	with tf.control_dependencies(update_ops):
 		optimizer = tf.train.AdamOptimizer(learning_rate=learning_rate).minimize(cost)
-
-	correct = tf.equal(prediction, y)
-	accuracy = tf.reduce_mean(tf.cast(correct, "float"))
 
 	# separating out the data into training and validation set
 	x_set = [i[0] for i in training_data]
@@ -64,26 +58,18 @@ def ConvNN_Train(x):
 		# training
 		for epoch in range(n_epochs):
 			epoch_loss = 0
-			running_acc = 0
 			for batch in range(int(len(train_x)/batch_size)):
 				batch_x = train_x[batch*batch_size:min((batch+1)*batch_size, len(train_x)-1)]
 				batch_y = train_y[batch*batch_size:min((batch+1)*batch_size, len(train_y)-1)]
 
 				opt, loss = sess.run([optimizer, cost], feed_dict={x: batch_x, y: batch_y})
-				running_acc += sess.run(accuracy, feed_dict={x: batch_x, y: batch_y})
 
 				epoch_loss += loss
 
-				#testing
-				pred, y_test = sess.run([prediction, y_], feed_dict={x: batch_x, y: batch_y})
-				print("This is pred: {}. Compare: {}" .format(pred, y_test))
-			epoch_acc = sess.run(accuracy, feed_dict={x: test_x, y: test_y})
 			print("Epoch {}/{}." .format(epoch+1, n_epochs))
-			print("Epoch Loss: {}, Epoch Accuracy: {}" .format(epoch_loss, epoch_acc))
-			print("Running Accuracy: {}" .format(running_acc/int(len(train_x)/batch_size)))
+			print("Epoch Loss: {}" .format(epoch_loss))
 
 		print("\nTraining Done!")
-		print("Final Accuracy: {}" .format(accuracy.eval({x: test_x, y: test_y})))
 
 		# Saving model
 		print("Saving Model: \"PNN_V2_MODEL_{}\"" .format(PNN_VERSION))

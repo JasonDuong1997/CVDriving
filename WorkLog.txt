@@ -22,6 +22,8 @@ Winter18    15      (started project during beginning of winter quarter)
 08/29/18    5.0     (figuring out ROS api)
 08/30/18    7.0     (still figuring out ROS api)
 08/31/18    14.0    (finally extracted .bag file data using ROS api)
+09/04/18    2.0
+09/05/18    8.0
 
 Done:
 -average the lines across multiple frames

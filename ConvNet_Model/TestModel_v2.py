@@ -51,7 +51,8 @@ def main():
 
 			# displaying prediction on test feed
 			font = cv2.FONT_HERSHEY_SIMPLEX
-			cv2.putText(display_data[i], str(prediction), (50, 50), font, 1, (0,0,255), 2)
+			cv2.putText(display_data[i], str(prediction) + str(screen[1]), (50, 50), font, 1, (0,0,255), 2)
+			print(str(prediction) + " : " + str(screen[1]))
 			cv2.imshow("image", display_data[i])
 			i += 1
 

@@ -1,24 +1,23 @@
 import tensorflow as tf
 from ConvNet_Model.PilotNetModel_v2 import  PilotNetV2_Model
 import numpy as np
+import time
 
 training_data = np.load("udacity_trainingData_processed.npy")
 
 learning_rate = 1e-4
 test_size = int(len(training_data)*0.12)
 batch_size = 128  	# number of images per cycle (in the power of 2 because # of physical processors is similar)
-n_epochs = 50	 	# number of epochs
+n_epochs = 350	 	# number of epochs
 n_outputs = 1	  	# number of outputs
 pool_s = 2			# maxpool stride
 
 WIDTH = 80
 HEIGHT = 60
 
-
 x = tf.placeholder("float", [None, HEIGHT, WIDTH, 3])
 y = tf.placeholder("float", [None, n_outputs])
 
-CNN_VERSION = "1.1"
 PNN_VERSION = "1.0"
 
 
@@ -65,10 +64,14 @@ def ConvNN_Train(x):
 				batch_y = train_y[batch*batch_size:min((batch+1)*batch_size, len(train_y)-1)]
 
 				opt, loss = sess.run([optimizer, cost], feed_dict={x: batch_x, y: batch_y})
-
 				epoch_loss += loss
+
+			test_pred = sess.run(prediction, feed_dict={x: test_x, y: test_y})
 			print("Epoch {}/{}." .format(epoch+1, n_epochs))
 			print("Epoch Loss: {}" .format(epoch_loss))
+			print("Predictions[0]: {}, {}" .format(test_pred[0], test_y[0]))
+			print("Predictions[1]: {}, {}" .format(test_pred[1], test_y[1]))
+			print("Predictions[2]: {}, {}" .format(test_pred[2], test_y[2]))
 
 		print("\nTraining Done!")
 
@@ -78,4 +81,7 @@ def ConvNN_Train(x):
 
 
 if __name__ == '__main__':
+	start = time.time()
 	ConvNN_Train(x)
+	end = time.time()
+	print("Total time: {}" .format(end - start))

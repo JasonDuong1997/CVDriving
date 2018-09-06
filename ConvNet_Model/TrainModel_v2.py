@@ -4,10 +4,10 @@ import numpy as np
 
 training_data = np.load("udacity_trainingData_processed.npy")
 
-learning_rate = 5e-4
+learning_rate = 1e-4
 test_size = int(len(training_data)*0.12)
 batch_size = 128  	# number of images per cycle (in the power of 2 because # of physical processors is similar)
-n_epochs = 120	 	# number of epochs
+n_epochs = 50	 	# number of epochs
 n_outputs = 1	  	# number of outputs
 pool_s = 2			# maxpool stride
 
@@ -25,6 +25,7 @@ PNN_VERSION = "1.0"
 def ConvNN_Train(x):
 	prediction = PilotNetV2_Model(x, WIDTH, HEIGHT, n_outputs, pool_s)
 
+	# getting list of trainable variables defined in the model
 	training_variables = tf.trainable_variables()
 
 	# OPERATIONS
@@ -34,6 +35,7 @@ def ConvNN_Train(x):
 	update_ops = tf.get_collection(tf.GraphKeys.UPDATE_OPS)
 	with tf.control_dependencies(update_ops):
 		optimizer = tf.train.AdamOptimizer(learning_rate=learning_rate).minimize(cost)
+
 
 	# separating out the data into training and validation set
 	x_set = [i[0] for i in training_data]
@@ -47,10 +49,10 @@ def ConvNN_Train(x):
 	print("train/test X: {}, {}" .format(len(train_x), len(test_x)))
 	print("train/test Y: {}, {}" .format(len(train_y), len(test_y)))
 
+
 	# dynamic allocation of GPU memory
 	config = tf.ConfigProto()
 	config.gpu_options.allow_growth = True
-
 	with tf.Session(config=config) as sess:
 		sess.run(tf.global_variables_initializer())
 		saver = tf.train.Saver()
@@ -65,7 +67,6 @@ def ConvNN_Train(x):
 				opt, loss = sess.run([optimizer, cost], feed_dict={x: batch_x, y: batch_y})
 
 				epoch_loss += loss
-
 			print("Epoch {}/{}." .format(epoch+1, n_epochs))
 			print("Epoch Loss: {}" .format(epoch_loss))
 

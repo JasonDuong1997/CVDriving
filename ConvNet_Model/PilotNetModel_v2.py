@@ -3,6 +3,7 @@ import tensorflow as tf
 is_training = True
 
 def weight(shape, name):
+	# numbers chosen more than 2 std devs away are thrown away and re-picked
 	initial = tf.truncated_normal(shape, stddev=0.1, name=name)
 	return tf.Variable(initial)
 
@@ -66,25 +67,25 @@ def PilotNetV2_Model(x, WIDTH, HEIGHT, n_outputs, pool_s=2):
 	# Fully Connected Layer(1164) -> Relu -> Dropout
 	# Fully Connected Layer(100) -> Relu -> Dropout
 	# Fully Connected Layer(50) -> Relu ->
-	# Output -> SoftMax	-> Steering Commands
+	# Output -> Steering Angle
 	x = tf.reshape(x, shape=[-1, HEIGHT, WIDTH, 3])
 	print("Input Size: {}" .format(x.get_shape()))
 
-	normalized = relu(tf.layers.batch_normalization(x, training=is_training))
+	normalized = relu(tf.layers.batch_normalization(x, training=is_training, trainable=True))
 
 	conv1 = conv2d(normalized, W_conv1, B_conv1, strides=2)
 	conv1 = relu(conv1)
-	conv1 = relu(tf.layers.batch_normalization(conv1, training=is_training))
+	conv1 = relu(tf.layers.batch_normalization(conv1, training=is_training, trainable=True))
 	print("Conv1 Size: {}" .format(conv1.get_shape()))
 
 	conv2 = conv2d(conv1, W_conv2, B_conv2, strides=2)
 	conv2 = relu(conv2)
-	conv2 = relu(tf.layers.batch_normalization(conv2, training=is_training))
+	conv2 = relu(tf.layers.batch_normalization(conv2, training=is_training, trainable=True))
 	print("Conv2 Size: {}" .format(conv2.get_shape()))
 
 	conv3 = conv2d(conv2, W_conv3, B_conv3, strides = 2)
 	conv3 = relu(conv3)
-	conv3 = relu(tf.layers.batch_normalization(conv3, training=is_training))
+	conv3 = relu(tf.layers.batch_normalization(conv3, training=is_training, trainable=True))
 	print("Conv3 Size: {}" .format(conv3.get_shape()))
 
 	conv4 = conv2d(conv3, W_conv4, B_conv4, strides = 1)
@@ -100,13 +101,13 @@ def PilotNetV2_Model(x, WIDTH, HEIGHT, n_outputs, pool_s=2):
 	print("Reshape Size: {}" .format(flat_img.get_shape()))
 
 	fc1 = relu(tf.matmul(flat_img, W_fc1) + B_fc1)
-	fc1 = dropout(fc1, 0.4)
+	fc1 = dropout(fc1, 0.2)
 
 	fc2 = relu(tf.matmul(fc1, W_fc2) + B_fc2)
-	fc2 = dropout(fc2, 0.3)
+	fc2 = dropout(fc2, 0.4)
 
 	fc3 = relu(tf.matmul(fc2, W_fc3) + B_fc3)
-	# fc3 = dropout(fc3, 0.5)
+	# fc3 = dropout(fc3, 0.3)
 
 	output = tf.matmul(fc3, W_out) + B_out
 

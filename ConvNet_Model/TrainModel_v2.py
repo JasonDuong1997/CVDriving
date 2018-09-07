@@ -1,5 +1,6 @@
 import tensorflow as tf
 from ConvNet_Model.PilotNetModel_v2 import  PilotNetV2_Model
+import matplotlib.pyplot as plt
 import numpy as np
 import time
 
@@ -8,7 +9,7 @@ training_data = np.load("udacity_trainingData_processed.npy")
 learning_rate = 1e-4
 test_size = int(len(training_data)*0.12)
 batch_size = 128  	# number of images per cycle (in the power of 2 because # of physical processors is similar)
-n_epochs = 350	 	# number of epochs
+n_epochs = 300	 	# number of epochs
 n_outputs = 1	  	# number of outputs
 pool_s = 2			# maxpool stride
 
@@ -23,9 +24,10 @@ PNN_VERSION = "1.0"
 
 def ConvNN_Train(x):
 	prediction = PilotNetV2_Model(x, WIDTH, HEIGHT, n_outputs, pool_s)
+	#accuracy = tf.metrics.mean_relative_error(y, prediction, normalizer=y)
+	#accuracy = tf.reduce_mean(tf.subtract(1.0, tf.truediv([tf.subtract(y, prediction)], y)))
 
-	# getting list of trainable variables defined in the model
-	training_variables = tf.trainable_variables()
+	training_variables = tf.trainable_variables()	# getting list of trainable variables defined in the model
 
 	# OPERATIONS
 	cost = tf.reduce_mean(tf.square(tf.subtract(prediction, y))) + tf.add_n([tf.nn.l2_loss(variable) for variable in training_variables])*learning_rate
@@ -48,11 +50,21 @@ def ConvNN_Train(x):
 	print("train/test X: {}, {}" .format(len(train_x), len(test_x)))
 	print("train/test Y: {}, {}" .format(len(train_y), len(test_y)))
 
+	# plotting the loss
+	plt.figure(figsize=(15,8))
+	plt.axis([0, n_epochs, 0, 50])
+	plt.grid(True)
+	plt.xticks(np.arange(0, n_epochs, 10))
+	plt.yticks(np.arange(0, 50, 2))
+	plt.xlabel("Epoch Number")
+	plt.ylabel("Epoch Loss")
+	plt.title("Epoch Loss Curve")
 
 	# dynamic allocation of GPU memory
 	config = tf.ConfigProto()
 	config.gpu_options.allow_growth = True
 	with tf.Session(config=config) as sess:
+		#sess.run(tf.local_variables_initializer())
 		sess.run(tf.global_variables_initializer())
 		saver = tf.train.Saver()
 
@@ -70,15 +82,20 @@ def ConvNN_Train(x):
 			print("Epoch {}/{}." .format(epoch+1, n_epochs))
 			print("Epoch Loss: {}" .format(epoch_loss))
 			print("Predictions[0]: {}, {}" .format(test_pred[0], test_y[0]))
-			print("Predictions[1]: {}, {}" .format(test_pred[1], test_y[1]))
-			print("Predictions[2]: {}, {}" .format(test_pred[2], test_y[2]))
+			print("Predictions[1]: {}, {}" .format(test_pred[50], test_y[50]))
+			print("Predictions[2]: {}, {}" .format(test_pred[100], test_y[100]))
+			# acc = sess.run(accuracy, feed_dict={x: test_x, y: test_y})
+			# print("Epoch Acc: {}" .format(acc))
 
+			plt.scatter(epoch, epoch_loss)
+			plt.pause(0.05)
+		plt.show()
 		print("\nTraining Done!")
 
 		# Saving model
 		print("Saving Model: \"PNN_V2_MODEL_{}\"" .format(PNN_VERSION))
 		saver.save(sess, "./PNN_V2_Model_{}".format(PNN_VERSION))
-
+		plt.close("all")
 
 if __name__ == '__main__':
 	start = time.time()

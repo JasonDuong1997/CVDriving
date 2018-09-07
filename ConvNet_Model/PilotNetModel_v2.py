@@ -34,27 +34,27 @@ def PilotNetV2_Model(x, WIDTH, HEIGHT, n_outputs, pool_s=2):
 	# Conv (conv): [filter_width, filter_height, channels, # of filters]
 	# FC (fc)    : [size of downsampled image * size of layer input, # of neurons in layer]
 	# Out (out)  : [# of outputs]
-	W_conv1 = weight([5,5,  3, 24], name="W_conv1")
-	W_conv2 = weight([5,5, 24, 36], name="W_conv2")
-	W_conv3 = weight([5,5, 36, 48], name="W_conv3")
-	W_conv4 = weight([3,3, 48, 64], name="W_conv4")
-	W_conv5 = weight([3,3, 64, 64], name="W_conv5")
-	W_fc1 =  weight([W_fc_input*64, 1164], name="W_fc1")
-	W_fc2 =  weight([1164, 100], name="W_fc2")
-	W_fc3 =  weight([100, 50], name="W_fc3")
-	W_out = weight([50, n_outputs], name="W_out")
+	W_conv1 = weight([5,5,  3, 12], name="W_conv1")
+	W_conv2 = weight([5,5, 12, 24], name="W_conv2")
+	W_conv3 = weight([5,5, 24, 36], name="W_conv3")
+	W_conv4 = weight([3,3, 36, 48], name="W_conv4")
+	W_conv5 = weight([3,3, 48, 48], name="W_conv5")
+	W_fc1 =  weight([W_fc_input*48, 960], name="W_fc1")
+	W_fc2 =  weight([960, 80], name="W_fc2")
+	W_fc3 =  weight([80, 40], name="W_fc3")
+	W_out = weight([40, n_outputs], name="W_out")
 	# DEFINING BIASES
 	# Conv (conv): [# number of filters]
 	# FC (fc)    : [# number of filters]
 	# Out (out)  : [# of outputs]
-	B_conv1 = bias([24], name="B_conv1")
-	B_conv2 = bias([36], name="B_conv2")
-	B_conv3 = bias([48], name="B_conv3")
-	B_conv4 = bias([64], name="B_conv4")
-	B_conv5 = bias([64], name="B_conv5")
-	B_fc1 = bias([1164], name="B_fc1")
-	B_fc2 = bias([100], name="B_fc2")
-	B_fc3 = bias([50], name="B_fc3")
+	B_conv1 = bias([12], name="B_conv1")
+	B_conv2 = bias([24], name="B_conv2")
+	B_conv3 = bias([36], name="B_conv3")
+	B_conv4 = bias([48], name="B_conv4")
+	B_conv5 = bias([48], name="B_conv5")
+	B_fc1 = bias([960], name="B_fc1")
+	B_fc2 = bias([80], name="B_fc2")
+	B_fc3 = bias([40], name="B_fc3")
 	B_out = bias([n_outputs], name="B_out")
 
 	# DEFINING PilotNet ARCHITECTURE
@@ -72,39 +72,40 @@ def PilotNetV2_Model(x, WIDTH, HEIGHT, n_outputs, pool_s=2):
 	x = tf.reshape(x, shape=[-1, HEIGHT, WIDTH, 3])
 	print("Input Size: {}" .format(x.get_shape()))
 
-	normalized = relu(tf.layers.batch_normalization(x, training=is_training, trainable=True))
+	normalized = tanh(tf.layers.batch_normalization(x, training=is_training, trainable=True))
 
 	conv1 = conv2d(normalized, W_conv1, B_conv1, strides=2)
 	conv1 = tanh(conv1)
-	# conv1 = relu(tf.layers.batch_normalization(conv1, training=is_training, trainable=True))
+	# conv1 = tanh(tf.layers.batch_normalization(conv1, training=is_training, trainable=True))
 
 	conv2 = conv2d(conv1, W_conv2, B_conv2, strides=2)
 	conv2 = tanh(conv2)
-	# conv2 = relu(tf.layers.batch_normalization(conv2, training=is_training, trainable=True))
+	# conv2 = tanh(tf.layers.batch_normalization(conv2, training=is_training, trainable=True))
 
-	conv3 = conv2d(conv2, W_conv3, B_conv3, strides = 2)
+	conv3 = conv2d(conv2, W_conv3, B_conv3, strides=1)
 	conv3 = tanh(conv3)
-	conv3 = relu(tf.layers.batch_normalization(conv3, training=is_training, trainable=True))
+	# conv3 = tanh(tf.layers.batch_normalization(conv3, training=is_training, trainable=True))
 
-	conv4 = conv2d(conv3, W_conv4, B_conv4, strides = 1)
+	conv4 = conv2d(conv3, W_conv4, B_conv4, strides=2)
 	conv4 = tanh(conv4)
+	# conv4 = tanh(tf.layers.batch_normalization(conv4, training=is_training, trainable=True))
 
-	conv5 = conv2d(conv4, W_conv5, B_conv5, strides = 1)
+	conv5 = conv2d(conv4, W_conv5, B_conv5, strides=1)
 	conv5 = tanh(conv5)
+	# conv5 = tanh(tf.layers.batch_normalization(conv5, training=is_training, trainable=True))
 
 	# flatten to 1 dimension for fully connected layers
 	flat_img = tf.reshape(conv5, shape=[-1, W_fc1.get_shape().as_list()[0]])
-	print("Reshape Size: {}" .format(flat_img.get_shape()))
 
 	fc1 = tanh(tf.matmul(flat_img, W_fc1) + B_fc1)
-	fc1 = dropout(fc1, 0.2)
+	fc1 = dropout(fc1, 0.3)
 
 	fc2 = tanh(tf.matmul(fc1, W_fc2) + B_fc2)
-	fc2 = dropout(fc2, 0.4)
+	fc2 = dropout(fc2, 0.5)
 
 	fc3 = tanh(tf.matmul(fc2, W_fc3) + B_fc3)
 	# fc3 = dropout(fc3, 0.3)
 
-	output = tf.matmul(fc3, W_out) + B_out
+	output = tanh(tf.matmul(fc3, W_out) + B_out)
 
 	return output

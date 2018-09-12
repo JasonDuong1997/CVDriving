@@ -9,7 +9,7 @@ training_data = np.load("udacity_trainingData_processed.npy")
 learning_rate = 1e-4
 test_size = int(len(training_data)*0.12)
 batch_size = 128  	# number of images per cycle (in the power of 2 because # of physical processors is similar)
-n_epochs = 300	 	# number of epochs
+n_epochs = 500	 	# number of epochs
 n_outputs = 1	  	# number of outputs
 pool_s = 2			# maxpool stride
 
@@ -22,10 +22,13 @@ y = tf.placeholder("float", [None, n_outputs])
 PNN_VERSION = "1.0"
 
 
+def round_decimal(num, n_positions):
+	format = "%." + str(n_positions) + "f"
+	return float(format % num)
+
+
 def ConvNN_Train(x):
 	prediction = PilotNetV2_Model(x, WIDTH, HEIGHT, n_outputs, pool_s)
-	#accuracy = tf.metrics.mean_relative_error(y, prediction, normalizer=y)
-	#accuracy = tf.reduce_mean(tf.subtract(1.0, tf.truediv([tf.subtract(y, prediction)], y)))
 
 	training_variables = tf.trainable_variables()	# getting list of trainable variables defined in the model
 
@@ -35,7 +38,7 @@ def ConvNN_Train(x):
 	# optimizer with normalization
 	update_ops = tf.get_collection(tf.GraphKeys.UPDATE_OPS)
 	with tf.control_dependencies(update_ops):
-		optimizer = tf.train.AdamOptimizer(learning_rate=learning_rate).minimize(cost)
+		optimizer = tf.train.AdamOptimizer(learning_rate=learning_rate, epsilon=1e-05).minimize(cost)
 
 
 	# separating out the data into training and validation set
@@ -78,9 +81,11 @@ def ConvNN_Train(x):
 				opt, loss = sess.run([optimizer, cost], feed_dict={x: batch_x, y: batch_y})
 				epoch_loss += loss
 
+			val_loss = sess.run(cost, feed_dict={x: test_x, y: test_y})
 			test_pred = sess.run(prediction, feed_dict={x: test_x, y: test_y})
 			print("Epoch {}/{}." .format(epoch+1, n_epochs))
-			print("Epoch Loss: {}" .format(epoch_loss))
+			print("Epoch Loss     : {}" .format(epoch_loss))
+			print("Validation Loss: {}" .format(val_loss))
 			print("Predictions[0]: {}, {}" .format(test_pred[0], test_y[0]))
 			print("Predictions[1]: {}, {}" .format(test_pred[50], test_y[50]))
 			print("Predictions[2]: {}, {}" .format(test_pred[100], test_y[100]))

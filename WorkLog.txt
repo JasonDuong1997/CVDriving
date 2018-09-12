@@ -25,7 +25,7 @@ Winter18    15      (started project during beginning of winter quarter)
 09/04/18    2.0
 09/05/18    8.0
 09/06/18    8.0
-
+09/11/18    10.0    (still tuning hyperparameters)
 
 Done:
 -average the lines across multiple frames
@@ -47,3 +47,5 @@ TODO List:
 -vertically stretch road
 -collect samples for right and left steering
 -convert Udacity dataset from rosbag to csv
+
+-compare only x.xx digits and use tf.cond

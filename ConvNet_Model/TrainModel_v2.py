@@ -9,7 +9,7 @@ training_data = np.load("udacity_trainingData_processed.npy")
 learning_rate = 3e-5
 test_size = int(len(training_data)*0.01)
 batch_size = 128  	# number of images per cycle (in the power of 2 because # of physical processors is similar)
-n_epochs = 600	 	# number of epochs
+n_epochs = 450	 	# number of epochs
 n_outputs = 1	  	# number of outputs
 pool_s = 2			# maxpool stride
 
@@ -28,10 +28,9 @@ def round_decimal(num, n_positions):
 
 
 def ConvNN_Train(x):
-	training_variables = tf.trainable_variables()	# getting list of trainable variables defined in the model
-
 	# OPERATIONS
 	prediction = PilotNetV2_Model(x, WIDTH, HEIGHT, n_outputs, pool_s)
+	training_variables = tf.trainable_variables()	# getting list of trainable variables defined in the model
 	cost = tf.reduce_mean(tf.square(tf.subtract(prediction, y))) + tf.add_n([tf.nn.l2_loss(variable) for variable in training_variables if "B" not in variable.name])*learning_rate
 
 	# optimizer with normalization

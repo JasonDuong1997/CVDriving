@@ -6,10 +6,10 @@ import time
 
 training_data = np.load("udacity_trainingData_processed.npy")
 
-learning_rate = 5e-5
+learning_rate = 3e-5
 test_size = int(len(training_data)*0.01)
 batch_size = 128  	# number of images per cycle (in the power of 2 because # of physical processors is similar)
-n_epochs = 300	 	# number of epochs
+n_epochs = 600	 	# number of epochs
 n_outputs = 1	  	# number of outputs
 pool_s = 2			# maxpool stride
 
@@ -28,11 +28,10 @@ def round_decimal(num, n_positions):
 
 
 def ConvNN_Train(x):
-	prediction = PilotNetV2_Model(x, WIDTH, HEIGHT, n_outputs, pool_s)
-
 	training_variables = tf.trainable_variables()	# getting list of trainable variables defined in the model
 
 	# OPERATIONS
+	prediction = PilotNetV2_Model(x, WIDTH, HEIGHT, n_outputs, pool_s)
 	cost = tf.reduce_mean(tf.square(tf.subtract(prediction, y))) + tf.add_n([tf.nn.l2_loss(variable) for variable in training_variables if "B" not in variable.name])*learning_rate
 
 	# optimizer with normalization
@@ -45,11 +44,9 @@ def ConvNN_Train(x):
 	x_set = [i[0] for i in training_data]
 	train_x = x_set[:-test_size]
 	test_x = x_set[-test_size:]
-
 	y_set = [i[1] for i in training_data]
 	train_y = y_set[:-test_size]
 	test_y = y_set[-test_size:]
-
 	print("train/test X: {}, {}" .format(len(train_x), len(test_x)))
 	print("train/test Y: {}, {}" .format(len(train_y), len(test_y)))
 
@@ -63,7 +60,7 @@ def ConvNN_Train(x):
 	plt.ylabel("Epoch Loss")
 	plt.title("Epoch Loss Curve")
 
-	# dynamic allocation of GPU memory
+	# enabling dynamic allocation of GPU memory
 	config = tf.ConfigProto()
 	config.gpu_options.allow_growth = True
 	with tf.Session(config=config) as sess:
@@ -101,6 +98,7 @@ def ConvNN_Train(x):
 		print("Saving Model: \"PNN_V2_MODEL_{}\"" .format(PNN_VERSION))
 		saver.save(sess, "./PNN_V2_Model_{}".format(PNN_VERSION))
 		plt.close("all")
+
 
 if __name__ == '__main__':
 	start = time.time()

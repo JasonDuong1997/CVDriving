@@ -52,3 +52,4 @@ TODO List:
 
 -compare only x.xx digits and use tf.cond
 -lower learning rate and increase number of epochs to allow the model to train better
+-look up "grid search" for testing hyperparameter values

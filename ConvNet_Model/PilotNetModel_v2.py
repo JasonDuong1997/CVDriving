@@ -1,7 +1,5 @@
 import tensorflow as tf
 
-is_training = True
-
 def weight(shape, name):
 	# numbers chosen more than 2 std devs away are thrown away and re-picked
 	initial = tf.truncated_normal(shape, stddev=0.1, name=name)
@@ -20,13 +18,16 @@ def relu(x):
 def tanh(x):
 	return tf.tanh(x)
 
+def sigmoid(x):
+	return tf.sigmoid(x)
+
 def max_pool2d(x, kernel=2):
 	return tf.nn.max_pool(x, ksize=[1, kernel,kernel, 1], strides=[1, kernel,kernel, 1], padding="SAME")
 
 def dropout(x, drop_rate=0.5):
 	return tf.layers.dropout(x, rate=drop_rate)
 
-def PilotNetV2_Model(x, WIDTH, HEIGHT, n_outputs, pool_s=2):
+def PilotNetV2_Model(x, WIDTH, HEIGHT, n_outputs, pool_s=2, is_training=True):
 	W_fc_input = 8*10
 
 	# DEFINING WEIGHTS
@@ -34,27 +35,29 @@ def PilotNetV2_Model(x, WIDTH, HEIGHT, n_outputs, pool_s=2):
 	# FC (fc)    : [size of downsampled image * size of layer input, # of neurons in layer]
 	# Out (out)  : [# of outputs]
 	W_conv1 = weight([5,5,  3, 24], name="W_conv1")
-	W_conv2 = weight([5,5, 24, 32], name="W_conv2")
-	W_conv3 = weight([3,3, 32, 64], name="W_conv3")
-	W_conv4 = weight([5,5, 64, 128], name="W_conv4")
-	W_conv5 = weight([3,3, 128, 128], name="W_conv5")
-	W_fc1 =  weight([W_fc_input*128, 1024], name="W_fc1")
-	W_fc2 =  weight([1024, 100], name="W_fc2")
-	W_fc3 =  weight([100, 50], name="W_fc3")
-	W_out = weight([50, n_outputs], name="W_out")
+	W_conv2 = weight([5,5, 24, 36], name="W_conv2")
+	W_conv3 = weight([5,5, 36, 48], name="W_conv3")
+	W_conv4 = weight([3,3, 48, 64], name="W_conv4")
+	W_conv5 = weight([3,3, 64, 64], name="W_conv5")
+	W_fc1   = weight([W_fc_input*64, 1164], name="W_fc1")
+	W_fc2   = weight([1164, 100], name="W_fc2")
+	W_fc3   = weight([100, 50], name="W_fc3")
+	W_fc4   = weight([50, 10], name="W_fc4")
+	W_out   = weight([10, n_outputs], name="W_out")
 	# DEFINING BIASES
 	# Conv (conv): [# number of filters]
 	# FC (fc)    : [# number of filters]
 	# Out (out)  : [# of outputs]
 	B_conv1 = bias([24], name="B_conv1")
-	B_conv2 = bias([32], name="B_conv2")
-	B_conv3 = bias([64], name="B_conv3")
-	B_conv4 = bias([128], name="B_conv4")
-	B_conv5 = bias([128], name="B_conv5")
-	B_fc1 = bias([1024], name="B_fc1")
-	B_fc2 = bias([100], name="B_fc2")
-	B_fc3 = bias([50], name="B_fc3")
-	B_out = bias([n_outputs], name="B_out")
+	B_conv2 = bias([36], name="B_conv2")
+	B_conv3 = bias([48], name="B_conv3")
+	B_conv4 = bias([64], name="B_conv4")
+	B_conv5 = bias([64], name="B_conv5")
+	B_fc1   = bias([1164], name="B_fc1")
+	B_fc2   = bias([100], name="B_fc2")
+	B_fc3   = bias([50], name="B_fc3")
+	B_fc4   = bias([10], name="B_fc4")
+	B_out   = bias([n_outputs], name="B_out")
 
 	# DEFINING PilotNet ARCHITECTURE
 	# Input Image(width = 80, height = 60, RGB) ->
@@ -71,9 +74,9 @@ def PilotNetV2_Model(x, WIDTH, HEIGHT, n_outputs, pool_s=2):
 	x = tf.reshape(x, shape=[-1, HEIGHT, WIDTH, 3])
 	print("Input Size: {}" .format(x.get_shape()))
 
-	#normalized = tanh(tf.layers.batch_normalization(x, training=is_training, trainable=True))
+	normalized = tf.layers.batch_normalization(x, training=is_training, trainable=True)
 
-	conv1 = conv2d(x, W_conv1, B_conv1, strides=2)
+	conv1 = conv2d(normalized, W_conv1, B_conv1, strides=2)
 	conv1 = tanh(conv1)
 	# conv1 = tanh(tf.layers.batch_normalization(conv1, training=is_training, trainable=True))
 
@@ -97,14 +100,17 @@ def PilotNetV2_Model(x, WIDTH, HEIGHT, n_outputs, pool_s=2):
 	flat_img = tf.reshape(conv5, shape=[-1, W_fc1.get_shape().as_list()[0]])
 
 	fc1 = tanh(tf.matmul(flat_img, W_fc1) + B_fc1)
-	fc1 = dropout(fc1, 0.5)
+	fc1 = dropout(fc1, 0.2)
 
 	fc2 = tanh(tf.matmul(fc1, W_fc2) + B_fc2)
-	fc2 = dropout(fc2, 0.5)
+	fc2 = dropout(fc2, 0.3)
 
 	fc3 = tanh(tf.matmul(fc2, W_fc3) + B_fc3)
-	# fc3 = dropout(fc3, 0.3)
+	fc3 = dropout(fc3, 0.3)
 
-	output = tanh(tf.matmul(fc3, W_out) + B_out)
+	fc4 = tanh(tf.matmul(fc3, W_fc4) + B_fc4)
+
+	# pure linear output
+	output = tf.matmul(fc4, W_out) + B_out
 
 	return output

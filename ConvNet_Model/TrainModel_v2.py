@@ -6,10 +6,10 @@ import time
 
 training_data = np.load("udacity_trainingData_processed.npy")
 
-learning_rate = 1e-4
-test_size = int(len(training_data)*0.12)
+learning_rate = 5e-5
+test_size = int(len(training_data)*0.01)
 batch_size = 128  	# number of images per cycle (in the power of 2 because # of physical processors is similar)
-n_epochs = 500	 	# number of epochs
+n_epochs = 300	 	# number of epochs
 n_outputs = 1	  	# number of outputs
 pool_s = 2			# maxpool stride
 
@@ -33,12 +33,12 @@ def ConvNN_Train(x):
 	training_variables = tf.trainable_variables()	# getting list of trainable variables defined in the model
 
 	# OPERATIONS
-	cost = tf.reduce_mean(tf.square(tf.subtract(prediction, y))) + tf.add_n([tf.nn.l2_loss(variable) for variable in training_variables])*learning_rate
+	cost = tf.reduce_mean(tf.square(tf.subtract(prediction, y))) + tf.add_n([tf.nn.l2_loss(variable) for variable in training_variables if "B" not in variable.name])*learning_rate
 
 	# optimizer with normalization
 	update_ops = tf.get_collection(tf.GraphKeys.UPDATE_OPS)
 	with tf.control_dependencies(update_ops):
-		optimizer = tf.train.AdamOptimizer(learning_rate=learning_rate, epsilon=1e-05).minimize(cost)
+		optimizer = tf.train.AdamOptimizer(learning_rate=learning_rate, epsilon=1e-08).minimize(cost)
 
 
 	# separating out the data into training and validation set

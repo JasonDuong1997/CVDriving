@@ -10,7 +10,7 @@ n_outputs = 1
 pool_s = 2
 
 x = tf.placeholder("float", [None, HEIGHT, WIDTH])
-model = PilotNetV2_Model(x, WIDTH, HEIGHT, n_outputs, pool_s)
+model = PilotNetV2_Model(x, WIDTH, HEIGHT, n_outputs, pool_s, is_training=False)
 
 PNN_VERSION = "1.0"
 

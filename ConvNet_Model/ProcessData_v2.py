@@ -5,7 +5,7 @@ from collections import Counter
 
 
 def resize(src_img):
-	return cv2.resize(src_img, dsize=(80,60))
+	return cv2.resize(src_img, dsize=(160,120))
 
 
 def shuffle(training_data):
@@ -27,7 +27,7 @@ def main():
 	# randomizing order of training data
 	processed_data = shuffle(training_data)
 
-	np.save("udacity_trainingData_processed.npy", processed_data)
+	np.save("udacity_trainingData_processed2.npy", processed_data)
 
 
 main()

@@ -29,19 +29,19 @@ def main():
 	last_time = time.time()
 	frame_loop = 0
 
+	training_variables = tf.trainable_variables()	# getting list of trainable variables defined in the model
+
 	print("----- Loading Weights -----")
 	config = tf.ConfigProto()
 	config.gpu_options.allow_growth = True	# allow dynamic allocation of memory
 	with tf.Session(config=config) as sess:
 		sess.run(tf.global_variables_initializer())
 
-		saver = tf.train.import_meta_graph("./PNN_V2_Model_{}.meta".format(PNN_VERSION))
-		saver.restore(sess, tf.train.latest_checkpoint("./"))
+		loader = tf.train.import_meta_graph("./PNN_V2_Model_{}.meta".format(PNN_VERSION))
+		loader.restore(sess, tf.train.latest_checkpoint("./"))
 
-		for i in range(0,3):
-			print("On the count of 3: {}" .format(i))
-			time.sleep(.5)
-
+		variable_ = sess.run("W_fc1:0")
+		print(variable_)
 
 		print("loop took {} seconds " .format(time.time()-last_time))
 		last_time = time.time()
@@ -59,7 +59,8 @@ def main():
 			running_error += calc_error(prediction, screen[1])
 			cv2.imshow("image", display_data[i])
 			i += 1
-			if (i == 100):
+			if (i == 2):
+				cv2.destroyAllWindows()
 				break
 			if cv2.waitKey(25) & 0xFF == ord('q'):
 					cv2.destroyAllWindows()

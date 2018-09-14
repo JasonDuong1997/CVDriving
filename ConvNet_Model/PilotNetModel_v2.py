@@ -7,12 +7,12 @@ def weight(shape, n_inputs, name):
 	# calculating standard deviation based on number of inputs
 	std_dev = math.sqrt(2.0/n_inputs)
 	# numbers chosen more than 2 std devs away are thrown away and re-picked
-	initial = tf.truncated_normal(shape, stddev=std_dev, name=name)
-	return tf.Variable(initial)
+	initial_val = tf.truncated_normal(shape, stddev=std_dev)
+	return tf.Variable(initial_val, name=name)
 
 def bias(shape, name):
-	initial = tf.constant(0.1, shape=shape, name=name)
-	return tf.Variable(initial)
+	initial_val = tf.constant(0.1, shape=shape)
+	return tf.Variable(initial_val, name=name)
 
 
 ### ACTIVATION FUNCTIONS ###

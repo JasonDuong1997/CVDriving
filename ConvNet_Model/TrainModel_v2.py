@@ -6,10 +6,10 @@ import time
 
 training_data = np.load("udacity_trainingData_processed.npy")
 
-learning_rate = 3e-5
+learning_rate = 2e-5
 test_size = int(len(training_data)*0.01)
 batch_size = 128  	# number of images per cycle (in the power of 2 because # of physical processors is similar)
-n_epochs = 450	 	# number of epochs
+n_epochs = 1000	 	# number of epochs
 n_outputs = 1	  	# number of outputs
 pool_s = 2			# maxpool stride
 
@@ -36,7 +36,7 @@ def ConvNN_Train(x):
 	# optimizer with normalization
 	update_ops = tf.get_collection(tf.GraphKeys.UPDATE_OPS)
 	with tf.control_dependencies(update_ops):
-		optimizer = tf.train.AdamOptimizer(learning_rate=learning_rate, epsilon=1e-08).minimize(cost)
+		optimizer = tf.train.AdamOptimizer(learning_rate=learning_rate, epsilon=1e-06).minimize(cost)
 
 
 	# separating out the data into training and validation set
@@ -51,10 +51,10 @@ def ConvNN_Train(x):
 
 	# plotting the loss
 	plt.figure(figsize=(15,8))
-	plt.axis([0, n_epochs, 0, 50])
+	plt.axis([0, n_epochs, 0, 30])
 	plt.grid(True)
-	plt.xticks(np.arange(0, n_epochs, 10))
-	plt.yticks(np.arange(0, 50, 2))
+	plt.xticks(np.arange(0, n_epochs, n_epochs/100))
+	plt.yticks(np.arange(0, 30, 1))
 	plt.xlabel("Epoch Number")
 	plt.ylabel("Epoch Loss")
 	plt.title("Epoch Loss Curve")

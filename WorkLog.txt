@@ -27,7 +27,7 @@ Winter18    15      (started project during beginning of winter quarter)
 09/06/18    8.0
 09/11/18    10.0    (still tuning hyperparameters)
 09/12/18    11.0    (each training session takes ~3300 seconds. lowest loss: 0.56)
-
+09/13/18    12.0    (lowest loss: 0.25)
 
 Done:
 -average the lines across multiple frames

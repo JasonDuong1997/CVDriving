@@ -6,10 +6,17 @@ import time
 
 training_data = np.load("udacity_trainingData_processed.npy")
 
-learning_rate = 2.9e-5
+# setting decaying learning rate
+global_step = tf.Variable(0, trainable=False)
+initial_learning_rate = 8e-5
+steps_per_epoch = 258
+learning_rate = tf.train.exponential_decay(initial_learning_rate, global_step, 500*steps_per_epoch, 0.68, staircase=True, name="LR_Decaying")
+epsilon = 0.5e-07
+
+
 test_size = int(len(training_data)*0.01)
 batch_size = 128  	# number of images per cycle (in the power of 2 because # of physical processors is similar)
-n_epochs = 3000	 	# number of epochs
+n_epochs = 4000	 	# number of epochs
 n_outputs = 1	  	# number of outputs
 pool_s = 2			# maxpool stride
 
@@ -36,7 +43,7 @@ def ConvNN_Train(x):
 	# optimizer with normalization
 	update_ops = tf.get_collection(tf.GraphKeys.UPDATE_OPS)
 	with tf.control_dependencies(update_ops):
-		optimizer = tf.train.AdamOptimizer(learning_rate=learning_rate, epsilon=1e-07).minimize(cost)
+		optimizer = tf.train.AdamOptimizer(learning_rate=learning_rate, epsilon=epsilon).minimize(cost, global_step=global_step)
 
 
 	# separating out the data into training and validation set
@@ -49,21 +56,23 @@ def ConvNN_Train(x):
 	print("train/test X: {}, {}" .format(len(train_x), len(test_x)))
 	print("train/test Y: {}, {}" .format(len(train_y), len(test_y)))
 
-	# plotting the loss
+	# creating loss graph
 	plt.figure(figsize=(15,8))
-	plt.axis([0, n_epochs, 0, 30])
+	plt.axis([0, n_epochs, 0, 10])
 	plt.grid(True)
 	plt.xticks(np.arange(0, n_epochs, n_epochs/20))
-	plt.yticks(np.arange(0, 30, 1))
+	plt.yticks(np.arange(0, 10, .5))
 	plt.xlabel("Epoch Number")
 	plt.ylabel("Epoch Loss")
 	plt.title("Epoch Loss Curve")
+
+	graph = tf.get_default_graph()
+	lr_test = graph.get_tensor_by_name("LR_Decaying:0")
 
 	# enabling dynamic allocation of GPU memory
 	config = tf.ConfigProto()
 	config.gpu_options.allow_growth = True
 	with tf.Session(config=config) as sess:
-		#sess.run(tf.local_variables_initializer())
 		sess.run(tf.global_variables_initializer())
 		saver = tf.train.Saver()
 
@@ -85,11 +94,11 @@ def ConvNN_Train(x):
 			print("Predictions[0]: {}, {}" .format(test_pred[0], test_y[0]))
 			print("Predictions[1]: {}, {}" .format(test_pred[50], test_y[50]))
 			print("Predictions[2]: {}, {}" .format(test_pred[100], test_y[100]))
-			# acc = sess.run(accuracy, feed_dict={x: test_x, y: test_y})
-			# print("Epoch Acc: {}" .format(acc))
+			print("Learning Rate: {}" .format(lr_test.eval()))
 
 			plt.scatter(epoch, epoch_loss)
 			plt.pause(0.05)
+
 		plt.show()
 		print("\nTraining Done!")
 

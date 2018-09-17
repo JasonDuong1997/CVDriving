@@ -19,6 +19,7 @@ loader = tf.train.Saver()
 
 PNN_VERSION = "1.0"
 
+print("Loading Data")
 test_data = np.load("test_data.npy")
 display_data = np.load("display_data.npy")
 

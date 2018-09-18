@@ -8,15 +8,15 @@ training_data = np.load("udacity_trainingData_processed.npy")
 
 # setting decaying learning rate
 global_step = tf.Variable(0, trainable=False)
-initial_learning_rate = 8.5e-5
+initial_learning_rate = 8e-5
 steps_per_epoch = 258
-learning_rate = tf.train.exponential_decay(initial_learning_rate, global_step, 400*steps_per_epoch, 0.63, staircase=True, name="LR_Decaying")
-epsilon = 0.5e-07
+learning_rate = tf.train.exponential_decay(initial_learning_rate, global_step, 200*steps_per_epoch, 0.70, staircase=True, name="LR_Decaying")
+epsilon = 2e-7
 
 
 test_size = int(len(training_data)*0.01)
 batch_size = 128  	# number of images per cycle (in the power of 2 because # of physical processors is similar)
-n_epochs = 4400	 	# number of epochs
+n_epochs = 5000	 	# number of epochs
 n_outputs = 1	  	# number of outputs
 pool_s = 2			# maxpool stride
 

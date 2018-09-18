@@ -43,9 +43,8 @@ def main():
 	with tf.Session(config=config) as sess:
 		sess.run(tf.global_variables_initializer())
 
-		#loader = tf.train.import_meta_graph("./PNN_V2_Model_{}.meta".format(PNN_VERSION))
-		#loader.restore(sess, tf.train.latest_checkpoint("./"))
-
+		graph = tf.get_default_graph()
+		print(graph.get_tensor_by_name("B_fc4:0").eval())
 		loader.restore(sess, "./PNN_V2_Model_{}".format(PNN_VERSION))
 
 		graph = tf.get_default_graph()
@@ -58,7 +57,10 @@ def main():
 		running_error = 0
 		for screen in test_data:
 			# making prediction
-			prediction = model.eval({x: screen[0].reshape(-1, HEIGHT, WIDTH)})[0]
+			# prediction = model.eval({x: screen[0].reshape(-1, HEIGHT, WIDTH)})[0]
+			prediction = sess.run(model, feed_dict={x: screen[0].reshape(-1, HEIGHT, WIDTH)})[0]
+
+
 
 			# displaying prediction on test feed
 			font = cv2.FONT_HERSHEY_SIMPLEX
@@ -67,7 +69,7 @@ def main():
 			running_error += calc_error(prediction, screen[1])
 			cv2.imshow("image", display_data[i])
 			i += 1
-			if (i == 20):
+			if (i == 1000):
 				cv2.destroyAllWindows()
 				break
 			if cv2.waitKey(25) & 0xFF == ord('q'):

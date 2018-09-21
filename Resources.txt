@@ -69,6 +69,15 @@ https://www.jeremyjordan.me/batch-normalization/
 https://github.com/udacity/self-driving-car/tree/master/datasets
     Udacity autonomous driving dataset
 
+https://www.deeplearningbook.org/
+    Deep Learning, Goodfellow
+
+https://www.youtube.com/watch?v=vT1JzLTH4G4&list=PL3FW7Lu3i5JvHM8ljYj-zLfQRF3EO8sYv
+    Stanford Course on Computer Vision
+
+https://docs.aws.amazon.com/machine-learning/latest/dg/model-fit-underfitting-vs-overfitting.html
+    Overfitting vs. Underfitting
+
 ====== TESTING ============
 Photos
 https://kevinwojo.ifiles.wordpress.com/2014/08/side-of-the-road.jpgineFilter

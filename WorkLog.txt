@@ -35,6 +35,7 @@ Winter18    15      (started project during beginning of winter quarter)
 09/18/18    14.0    (lowest loss: 0.00445)
 09/19/18    12.0    (changed architecture to use ReLu and now retesting hyperparameters)
 09/20/18    11.0
+09/22/18    4.0
 
 Done:
 -average the lines across multiple frames
@@ -46,6 +47,10 @@ Done:
 -feed processed lane images to convnet
 -implemented PilotNet
 -collect 100,000 samples
+-convert Udacity dataset from rosbag to csv
+-lower learning rate and increase number of epochs to allow the model to train better
+-make sure model is loading correctly. check "test" file for loading example
+
 
 TODO List:
 -dynamic source points for BEV (bird's eye view)
@@ -55,12 +60,12 @@ TODO List:
 -mapping out the road
 -vertically stretch road
 -collect samples for right and left steering
--convert Udacity dataset from rosbag to csv
 
--compare only x.xx digits and use tf.cond
--lower learning rate and increase number of epochs to allow the model to train better
 -look up "grid search" for testing hyperparameter values
--make sure model is loading correctly. check "test" file for loading example
 
+IMPORTANT
 -double data with horizontal flip
 -use k-fold validation, Near Optimal Learning Rate BP Algorithm, Early Stopping
+-change graph so it only plots every epoch instead of every cycle
+-use Grid Search to test different learning rates
+-check  Cyclic Learning Rates

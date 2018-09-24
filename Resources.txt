@@ -78,6 +78,12 @@ https://www.youtube.com/watch?v=vT1JzLTH4G4&list=PL3FW7Lu3i5JvHM8ljYj-zLfQRF3EO8
 https://docs.aws.amazon.com/machine-learning/latest/dg/model-fit-underfitting-vs-overfitting.html
     Overfitting vs. Underfitting
 
+http://mlexplained.com/2018/01/29/learning-rate-tuning-in-deep-learning-a-practical-guide/
+    When to modify learning rate
+
+https://arxiv.org/pdf/1506.01186.pdf
+    Cyclical Learning Rate
+
 ====== TESTING ============
 Photos
 https://kevinwojo.ifiles.wordpress.com/2014/08/side-of-the-road.jpgineFilter

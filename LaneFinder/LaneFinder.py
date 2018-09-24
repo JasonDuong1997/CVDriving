@@ -3,7 +3,6 @@ from PIL import ImageGrab
 import cv2
 import time
 import pyautogui as pag
-import GameControls as GInput
 import win32gui
 import math
 import traceback
@@ -211,7 +210,7 @@ def ProcessImage(image, vertices):    # only look at region of interest
 	cv2.fillPoly(mask, vertices, 255)
 	masked = cv2.bitwise_and(total_edges, mask)
 
-	cv2.imshow("Processed_Image", masked)
+	#cv2.imshow("Processed_Image", masked)
 	return masked
 
 

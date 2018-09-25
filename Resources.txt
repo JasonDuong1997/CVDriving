@@ -166,6 +166,25 @@ s_threshold     Slope magnitude must be above this to pass through the non-horiz
 rel_tol		    Tolerance for comparing similarity between the two lines
 
 
+/****** MODIFIABLE VALUES THAT AFFECT TRAINING (in TrainModel_v2.py) *******/
+[k_fold]
+k               Number of folds to split the training data into. More folds -> smaller validation size
+
+[early_stop]
+strikeout       Number of times the change of loss can be unacceptable before stopping the training
+threshold       Minimum absolute change in loss
+loss_monitor    Whether to check validation or training loss
+
+[CovNN_Train]
+batch_size      Size of minibatch. Smaller sizes converge on flatter minima, which is better for generalization
+n_epochs        Maximum number of epochs to train for. Higher number leads to higher risk of overfitting
+
+[AdamOptimizer]
+initial_learning_rate   Starter learning rate. Higher value leads to faster training, but more diverging
+epsilon         To avoid dividing by 0. Lower number -> bigger weight updates
+epochs_per_decay        Number of epochs to apply the next round of LR decay
+
+
 
 /****** REVIEW ******/
 Color Selection:

@@ -22,12 +22,14 @@ PNN_VERSION = "1.0"
 print("Loading Data")
 data = "test"
 if (data == "validation"):
-	test_data = np.load("validation_set.npy")
+	test_data = np.load("./Data/validation_set.npy")
 elif (data == "test"):
-	test_data = np.load("test_data.npy")
-display_data = np.load("display_data.npy")
+	test_data = np.load("./Datatest_data.npy")
+display_data = np.load("./Data/display_data.npy")
 
-
+# model information
+version = "v2"
+model_name = "./Model_Data/PNN_{}" .format(version)
 
 def calc_error(prediction, label):
 	error = (prediction - label)**2
@@ -47,10 +49,7 @@ def main():
 
 		# load up saved model
 		graph = tf.get_default_graph()
-		print(graph.get_tensor_by_name("B_fc4:0").eval())
-		loader.restore(sess, "./PNN_V2_Model_{}".format(PNN_VERSION))
-
-		print("loop took {} seconds " .format(time.time()-last_time))
+		loader.restore(sess, model_name)
 
 		i = 0
 		running_error = 0

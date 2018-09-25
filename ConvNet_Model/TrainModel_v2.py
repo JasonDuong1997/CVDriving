@@ -51,7 +51,7 @@ def cyclical_lr(epoch, amplitude, period):	#todo make this work with decay LR
 
 ### GLOBAL VARIABLES###
 print("Loading Data...")
-loaded_data = np.load("udacity_TD_proc_aug.npy")
+loaded_data = np.load("./Data/udacity_TD_proc_aug.npy")
 
 # separating out the data into training and validation set
 print("Separating Data into Training and Test Sets...")
@@ -66,10 +66,11 @@ batch_size = 64  	# number of images per cycle (in the power of 2 because # of p
 n_epochs = 3000 	# number of epochs
 n_outputs = 1	  	# number of outputs
 
-# setting decaying learning rate decided using Grid Search
+# deciding on learning rate using Grid Search
 # *********************************** #
 # Learning Rate List with 300 Epochs  #
 # *********************************** #
+# - using regular dataset
 # [LR]		[Train_Loss]	[Val_Loss]
 # 3.0e-4	1.556			0.222
 # 2.0e-4	1.165			0.183
@@ -83,10 +84,12 @@ n_outputs = 1	  	# number of outputs
 # ********************************** #
 # optimizer variables
 global_step = tf.Variable(0, trainable=False, name="global_step")
-initial_learning_rate = 8e-5
+initial_learning_rate = 5e-5
 epsilon = 5e-6
+decay_rate = 0.80
 steps_per_epoch = len(train_x)/batch_size
-learning_rate = tf.train.exponential_decay(initial_learning_rate, global_step, 200*steps_per_epoch, 0.80, staircase=True, name="LR_Decaying")  #todo check if this decay rate makes sense
+epochs_per_decay = 200
+learning_rate = tf.train.exponential_decay(initial_learning_rate, global_step, epochs_per_decay*steps_per_epoch, decay_rate, staircase=True, name="LR_Decaying")
 
 # image input dimensions
 WIDTH = 80
@@ -97,7 +100,7 @@ y = tf.placeholder("float", [None, n_outputs])
 
 # model information
 version = "v2"
-model_name = "./PNN_{}" .format(version)
+model_name = "./Model_Data/PNN_{}" .format(version)
 
 ### TRAINING FUNCTION ###
 # Specifications
@@ -190,7 +193,7 @@ def ConvNN_Train(x):
 				print("Strikes: {}" .format(strikes))
 				if (strikes == 1):	# saving model right when validation loss starts to increase
 					print("Saving Model Checkpoint")
-					saver.save(sess, model_name + "_chkpt")
+					saver.save(sess, model_name)
 				if (strikes == -1):	# strikeout condition
 					print("Early Stop at Epoch:{}/{}" .format(epoch, n_epochs))
 					is_saved = True
@@ -211,8 +214,11 @@ def ConvNN_Train(x):
 			print("Model Saved: {}" .format(model_name))
 
 		plt.close("all")
-
-
+# Early Stopping Results
+# -using augmented dataset
+# 		Epoch		Train_Loss		Val_Loss		ILR			FLR
+# 1.	298			1.356			0.538			8.0e-5		6.4e-5
+# 2.	120			3.851			0.778			5.0e-5		5.0e-5
 if __name__ == '__main__':
 	ConvNN_Train(x)
 

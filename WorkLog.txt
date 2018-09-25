@@ -36,6 +36,9 @@ Winter18    15      (started project during beginning of winter quarter)
 09/19/18    12.0    (changed architecture to use ReLu and now retesting hyperparameters)
 09/20/18    11.0
 09/22/18    4.0
+09/23/18    6.0     293 hours total
+09/24/18    7.0
+
 
 Done:
 -average the lines across multiple frames
@@ -50,7 +53,7 @@ Done:
 -convert Udacity dataset from rosbag to csv
 -lower learning rate and increase number of epochs to allow the model to train better
 -make sure model is loading correctly. check "test" file for loading example
-
+-added early stopping
 
 TODO List:
 -dynamic source points for BEV (bird's eye view)
@@ -65,7 +68,7 @@ TODO List:
 
 IMPORTANT
 -double data with horizontal flip
--use k-fold validation, Near Optimal Learning Rate BP Algorithm, Early Stopping
+-use k-fold validation, Near Optimal Learning Rate BP Algorithm
 -change graph so it only plots every epoch instead of every cycle
 -use Grid Search to test different learning rates
 -check  Cyclic Learning Rates

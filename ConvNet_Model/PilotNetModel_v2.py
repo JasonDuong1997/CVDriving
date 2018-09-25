@@ -2,7 +2,7 @@ import tensorflow as tf
 import math
 
 
-### VARIABLES ###
+### TF VARIABLES ###
 def weight(shape, n_inputs, name):
 	# calculating standard deviation based on number of inputs
 	std_dev = math.sqrt(2.0/n_inputs)
@@ -15,7 +15,7 @@ def bias(shape, name):
 	return tf.Variable(initial_val, name=name)
 
 
-### ACTIVATION FUNCTIONS ###
+### ACTIVATION/TRANSFER FUNCTIONS ###
 def relu(x):
 	return tf.nn.relu(x)
 
@@ -37,25 +37,25 @@ def dropout(x, drop_rate=0.5, is_training=True):
 	return tf.layers.dropout(x, rate=drop_rate, training=is_training)
 
 
-### MODEL ###
+### MODEL DEFINITION ###
 def PilotNetV2_Model(x, WIDTH, HEIGHT, n_outputs, is_training):
 	W_conv_input = WIDTH*HEIGHT*3
 	W_fc_input = 8*10
 
 	# DEFINING WEIGHTS
 	# Convolution (conv):   [filter_width, filter_height, channels, # of filters]
-	# Fully-Connected (fc): [size of downsampled image * size of layer input, # of neurons in layer]
-	# Output (out): 		[# of outputs]
+	# Fully-Connected (fc): [# of neurons in input layer, # of neurons to output]
+	# Output (out): 		[# of model outputs]
 	W_conv1 = weight([5,5,  3, 8], 	n_inputs=W_conv_input, name="W_conv1")
-	W_conv2 = weight([5,5, 8, 12], 	n_inputs=3*24, name="W_conv2")
-	W_conv3 = weight([3,3, 12, 16], n_inputs=24*35, name="W_conv3")
-	W_conv4 = weight([3,3, 16, 21], n_inputs=36*48, name="W_conv4")
-	W_conv5 = weight([3,3, 21, 21], n_inputs=48*64, name="W_conv5")
-	W_fc1   = weight([W_fc_input*21, 400], 	n_inputs=64*64, name="W_fc1")
-	W_fc2   = weight([400, 35],           	n_inputs=1164, name="W_fc2")
-	W_fc3   = weight([35, 16],             	n_inputs=100, name="W_fc3")
-	W_fc4   = weight([16, 5],              	n_inputs=50, name="W_fc4")
-	W_out   = weight([5, n_outputs],       	n_inputs=10, name="W_out")
+	W_conv2 = weight([5,5,  8, 12], n_inputs=3*8, name="W_conv2")
+	W_conv3 = weight([3,3, 12, 16], n_inputs=8*12, name="W_conv3")
+	W_conv4 = weight([3,3, 16, 21], n_inputs=12*16, name="W_conv4")
+	W_conv5 = weight([3,3, 21, 21], n_inputs=16*21, name="W_conv5")
+	W_fc1   = weight([W_fc_input*21, 400], 	n_inputs=21*21, name="W_fc1")
+	W_fc2   = weight([400, 35],           	n_inputs=400, name="W_fc2")
+	W_fc3   = weight([35, 16],             	n_inputs=35, name="W_fc3")
+	W_fc4   = weight([16, 5],              	n_inputs=16, name="W_fc4")
+	W_out   = weight([5, n_outputs],       	n_inputs=5, name="W_out")
 	# DEFINING BIASES
 	# Convolution (conv): 	[# number of filters]
 	# Fully-Connected (fc): [# number of filters]
@@ -71,12 +71,12 @@ def PilotNetV2_Model(x, WIDTH, HEIGHT, n_outputs, is_training):
 	B_fc4   = bias([5],   	name="B_fc4")
 	B_out   = bias([n_outputs], name="B_out")
 
-	# DEFINING PilotNet ARCHITECTURE
+	# DEFINING PilotNetV2 ARCHITECTURE
 	# Input Image(width = 80, height = 60, RGB) ->
 	# Normalization ->
-	# Convolution(5x5) -> Relu -> Normalization -> Relu ->
-	# Convolution(5x5) -> Relu -> Normalization -> Relu ->
-	# Convolution(5x5) -> Relu -> Normalization -> Relu ->
+	# Convolution(5x5) -> Relu ->
+	# Convolution(5x5) -> Relu ->
+	# Convolution(5x5) -> Relu ->
 	# Convolution(3x3) -> Relu ->
 	# Convolution(3x3) -> Relu ->
 	# Fully Connected Layer(1164) -> Relu -> Dropout
@@ -90,6 +90,7 @@ def PilotNetV2_Model(x, WIDTH, HEIGHT, n_outputs, is_training):
 	# 1. right after fc or conv layers
 	# 2. right before non-linearities
 	normalized = tf.layers.batch_normalization(x, training=is_training, trainable=True)
+	# normalized = relu(normalized)	# TESTING
 
 	conv1 = conv2d(normalized, W_conv1, B_conv1, strides=2)
 	conv1 = relu(conv1)

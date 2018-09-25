@@ -5,13 +5,8 @@ import numpy as np
 import time
 
 ### HELPER FUNCTIONS ###
-def round_decimal(num, n_positions):
-	format = "%." + str(n_positions) + "f"
-	return float(format % num)
-
-
 def k_fold_splitter(training_data, k=5):	# splitting training data into k equal parts
-	print("BEGIN: K-Fold Split with K={}" .format(k))
+	print("K-Fold Split with K={}" .format(k))
 	fold_len = int(len(training_data)/k)
 
 	split_data = []
@@ -19,12 +14,10 @@ def k_fold_splitter(training_data, k=5):	# splitting training data into k equal 
 		start_index = i*fold_len
 		split_data.append(training_data[start_index:(start_index + fold_len - 1)])
 
-	print("Data Kept: {} %" .format(fold_len*k/len(training_data*100)))
-	print("END: K-Fold Split")
 	return split_data
 
 def k_fold_selector(split_data, index):	# sectioning out train and test set
-	print("BEGIN: K-Fold Selector with Index={}" .format(index))
+	print("K-Fold Selector with Index={}" .format(index))
 	test_data = split_data[index]
 
 	train_data = []
@@ -37,42 +30,38 @@ def k_fold_selector(split_data, index):	# sectioning out train and test set
 	train_y = [i[1] for i in train_data]
 	test_x 	= [i[0] for i in test_data]
 	test_y 	= [i[1] for i in test_data]
-	print("END: K-Fold Selector")
+
 	return train_x, train_y, test_x, test_y
 
-def early_stop(loss_check, strikes, threshold, loss_monitor="validation"):	# checks the condition on when to finish training
+def early_stop(loss_check, strikes, strikeout, threshold, loss_monitor="validation"):	# checks the condition on when to finish training
 	if (loss_monitor == "validation"):
 		delta_loss = loss_check[1] - loss_check[0]
 		# if the change in loss is less than [tolerance]% or if the loss increased, add a strike
-		if (abs(delta_loss) < abs(threshold*loss_check[0]) or delta_loss > loss_check[0]):
+		if (abs(delta_loss) < abs(threshold*loss_check[0]) or delta_loss > 0):
 			strikes += 1
+			if (strikes == strikeout):
+				strikes = -1
 		else:
 			strikes = 0
 	return strikes
-
 
 def cyclical_lr(epoch, amplitude, period):	#todo make this work with decay LR
 	return np.sin(epoch*2*np.pi/period)*amplitude
 
 
-### GLOBAL VARIABLES ###
-loaded_data = np.load("udacity_trainingData_processed.npy")
+### GLOBAL VARIABLES###
+print("Loading Data...")
+loaded_data = np.load("udacity_TD_proc_aug.npy")
 
 # separating out the data into training and validation set
-# x_set = [i[0] for i in loaded_data]
-# train_x = x_set[:-test_size]
-# test_x = x_set[-test_size:]
-# y_set = [i[1] for i in loaded_data]
-# train_y = y_set[:-test_size]
-# test_y = y_set[-test_size:]
+print("Separating Data into Training and Test Sets...")
 k_splits = 10
 k_split_data = k_fold_splitter(loaded_data, k_splits)
-train_x, train_y, test_x, test_y = k_fold_selector(k_split_data, 9)
-print("train/test X: {}, {}".format(len(train_x), len(test_x)))
-print("train/test Y: {}, {}".format(len(train_y), len(test_y)))
+train_x, train_y, test_x, test_y = k_fold_selector(k_split_data, 1)
+print("[X] Train Size: {}. Test Size: {}".format(len(train_x), len(test_x)))
+print("[Y] Train Size: {}. Test Size: {}".format(len(train_y), len(test_y)))
 
 # training variables
-#test_size = int(len(loaded_data)*0.10)
 batch_size = 64  	# number of images per cycle (in the power of 2 because # of physical processors is similar)
 n_epochs = 3000 	# number of epochs
 n_outputs = 1	  	# number of outputs
@@ -94,10 +83,10 @@ n_outputs = 1	  	# number of outputs
 # ********************************** #
 # optimizer variables
 global_step = tf.Variable(0, trainable=False, name="global_step")
-initial_learning_rate = 9e-5
+initial_learning_rate = 8e-5
 epsilon = 5e-6
 steps_per_epoch = len(train_x)/batch_size
-learning_rate = tf.train.exponential_decay(initial_learning_rate, global_step, 200*steps_per_epoch, 0.90, staircase=True, name="LR_Decaying")  #todo check if this decay rate makes sense
+learning_rate = tf.train.exponential_decay(initial_learning_rate, global_step, 200*steps_per_epoch, 0.80, staircase=True, name="LR_Decaying")  #todo check if this decay rate makes sense
 
 # image input dimensions
 WIDTH = 80
@@ -106,16 +95,22 @@ HEIGHT = 60
 x = tf.placeholder("float", [None, HEIGHT, WIDTH, 3])
 y = tf.placeholder("float", [None, n_outputs])
 
-# model version
-PNN_VERSION = "1.0"
-
+# model information
+version = "v2"
+model_name = "./PNN_{}" .format(version)
 
 ### TRAINING FUNCTION ###
+# Specifications
+# Model: 				PilotNetV2
+# Cost Function: 		Mean Squared Loss with L2 Loss Weight Penalization
+# Optimizer: 			AdamOptimizer
+# Learning Rate Mod: 	Exponential Decay
+# Special Functions: 	Early Stopping, K-Fold Cross-Validation
 def ConvNN_Train(x):
 	# declaring operations
 	prediction = PilotNetV2_Model(x, WIDTH, HEIGHT, n_outputs, is_training=True)
 	training_variables = tf.trainable_variables()	# getting list of trainable variables defined in the model
-	cost = tf.reduce_mean(tf.square(tf.subtract(prediction, y))) + tf.add_n([tf.nn.l2_loss(variable) for variable in training_variables if "B" not in variable.name])*learning_rate
+	cost = tf.reduce_mean(tf.square(tf.subtract(prediction, y))) + tf.add_n([tf.nn.l2_loss(variable) for variable in training_variables if "B" not in variable.name])*learning_rate		# penalizing large weights with L2 loss
 
 	# creating optimizer with normalization
 	update_ops = tf.get_collection(tf.GraphKeys.UPDATE_OPS)
@@ -125,8 +120,8 @@ def ConvNN_Train(x):
 	# creating plot to graph the loss
 	x_max = n_epochs
 	x_scale = n_epochs/20
-	y_max = 30
-	y_scale = 1
+	y_max = 0.5
+	y_scale = 0.02
 	plt.figure(figsize=(15,8))
 	plt.axis([0, x_max, 0, y_max])
 	plt.grid(True)
@@ -152,9 +147,11 @@ def ConvNN_Train(x):
 
 		strikes = 0		# metric for the early stopping. each time the delta loss falls under desired threshold, add a strike
 		E_val_loss_prev = 0
+		is_saved = False
 
 		# training model
-		# Prefix Guide: E refers to epoch scope, while B refers to batch scope
+		# Prefix Guide: "E" refers to epoch scope, while "B" refers to batch scope
+		print("Training Starting!")
 		for epoch in range(n_epochs):
 			E_train_loss = 0
 			for batch in range(int(len(train_x)/batch_size)):	# feeding in training batches
@@ -173,7 +170,7 @@ def ConvNN_Train(x):
 				E_val_loss += B_test_loss
 
 			# stats per epoch
-			print("Epoch {}/{}." .format(epoch+1, n_epochs))
+			print("\nEpoch {}/{}." .format(epoch+1, n_epochs))
 			print("Epoch Loss     : {}" .format(E_train_loss))
 			print("Validation Loss: {}" .format(E_val_loss))
 			print("Learning Rate: {}" .format(lr_test.eval()))
@@ -184,25 +181,35 @@ def ConvNN_Train(x):
 			print("Predictions[2]: {}, {}" .format(test_pred[2], test_y[2]))
 			print("Predictions[3]: {}, {}" .format(test_pred[3], test_y[3]))
 
-			plt.scatter(epoch, E_train_loss)
+			plt.scatter(epoch, E_val_loss)
 			plt.pause(0.05)
 
 			if (epoch >= 1):
-				strikes = early_stop([E_val_loss_prev, E_val_loss], strikes, 0.01, "validation")
+				strikes = early_stop([E_val_loss_prev, E_val_loss], strikes, 5, 0.01, "validation")
 				E_val_loss_prev = E_val_loss
 				print("Strikes: {}" .format(strikes))
-				if (strikes == 5):
+				if (strikes == 1):	# saving model right when validation loss starts to increase
+					print("Saving Model Checkpoint")
+					saver.save(sess, model_name + "_chkpt")
+				if (strikes == -1):	# strikeout condition
 					print("Early Stop at Epoch:{}/{}" .format(epoch, n_epochs))
+					is_saved = True
+					end = time.time()
+					print("\nTraining Done! Time Elapsed: {} minutes".format((end - start) / 60.0))
+					plt.show()
 					break
-			print("\n")
 
 		end = time.time()
 		print("\nTraining Done! Time Elapsed: {} minutes" .format((end - start)/60.0))
 		plt.show()
 
 		# Saving model
-		print("Saving Model: \"PNN_V2_MODEL_{}\"" .format(PNN_VERSION))
-		saver.save(sess, "./PNN_V2_Model_{}".format(PNN_VERSION))
+		if (not is_saved):
+			print("Saving Model: {}" .format(model_name))
+			saver.save(sess, model_name)
+		else:
+			print("Model Saved: {}" .format(model_name))
+
 		plt.close("all")
 
 

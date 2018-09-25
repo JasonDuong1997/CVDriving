@@ -35,10 +35,7 @@ def calc_error(prediction, label):
 
 
 def main():
-	frames = 0.0
-	elapsed = time.time()
 	last_time = time.time()
-	frame_loop = 0
 
 	training_variables = tf.trainable_variables()	# getting list of trainable variables defined in the model
 
@@ -54,7 +51,6 @@ def main():
 		loader.restore(sess, "./PNN_V2_Model_{}".format(PNN_VERSION))
 
 		print("loop took {} seconds " .format(time.time()-last_time))
-		last_time = time.time()
 
 		i = 0
 		running_error = 0
@@ -65,8 +61,8 @@ def main():
 
 			# adding prediction onto test photos
 			font = cv2.FONT_HERSHEY_SIMPLEX
-			cv2.putText(display_data[i], str(prediction*-180) + str(screen[1]*-180), (50, 50), font, 1, (0,0,255), 2)
-			cv2.imshow("image", display_data[i])
+			cv2.putText(display_data[i], str(prediction*180) + str(screen[1][0]*180), (50, 50), font, 1, (0,0,255), 2)
+			cv2.imshow("Model Test", display_data[i])
 			print(str(prediction) + " : " + str(screen[1]))
 
 			# calculating error
@@ -79,6 +75,7 @@ def main():
 			if cv2.waitKey(25) & 0xFF == ord('q'):
 					cv2.destroyAllWindows()
 					break
+			time.sleep(3)
 		print("Average difference: {}" .format(running_error/i))
 
 

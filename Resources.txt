@@ -170,20 +170,20 @@ rel_tol		    Tolerance for comparing similarity between the two lines
 [k_fold]
 k               Number of folds to split the training data into. More folds -> smaller validation size
 
-[early_stop]
-strikeout       Number of times the change of loss can be unacceptable before stopping the training
-threshold       Minimum absolute change in loss
-loss_monitor    Whether to check validation or training loss
-
 [CovNN_Train]
 batch_size      Size of minibatch. Smaller sizes converge on flatter minima, which is better for generalization
 n_epochs        Maximum number of epochs to train for. Higher number leads to higher risk of overfitting
 
 [AdamOptimizer]
 initial_learning_rate   Starter learning rate. Higher value leads to faster training, but more diverging
-epsilon         To avoid dividing by 0. Lower number -> bigger weight updates
+epsilon                 To avoid dividing by 0. Lower number -> bigger weight updates
+decay_rate              Percent decay in learning rate for every decay trigger time
 epochs_per_decay        Number of epochs to apply the next round of LR decay
 
+[early_stop]
+strikeout       Number of times the change of loss can be unacceptable before stopping the training
+threshold       Minimum absolute change in loss
+loss_monitor    Whether to check validation or training loss
 
 
 /****** REVIEW ******/
@@ -211,17 +211,23 @@ cons - laggy effect when lanes change by large amounts
 potential fixes - improve frames per second to sample at a higher frequency to
                   get more accurate averages
 
-Using Convolutional Neural Network:
+Convolutional Neural Network:
 pros - can model after human driving
-cons - need very large data set
-     - subject to overfitting
-potential fixes - using the non-rounded values for steering (PWM?)
+     - regression model can predict steering angle
+     - automatic calculation of filters
+     - can learn patterns in data that would be hard to explicitly program for
+cons - need very large, curated data set
+     - need lots of hyperparameter tuning to get a good fit
+potential fixes - before tackling regression, divide up the output space into bins and use classification
+
+
+
 - Overfitting?
     -reduce learning rate
     -dropout layers
     -batch normalization
     -check training data for shuffled/balanced classes and representative validation set
-
+    -early stop on validation loss
 
 
 /***** QUESTIONS *****/
@@ -236,7 +242,7 @@ potential fixes - using the non-rounded values for steering (PWM?)
       and play with the color thresholding to extract the lanes under low light
 4. Stretching Out Dataset
     - can apply horizontal/vertical flips, translations, etc to multiply the dataset size
-
+5.
 
 
 

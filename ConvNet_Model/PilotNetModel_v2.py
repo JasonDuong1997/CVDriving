@@ -46,29 +46,29 @@ def PilotNetV2_Model(x, WIDTH, HEIGHT, n_outputs, is_training):
 	# Convolution (conv):   [filter_width, filter_height, channels, # of filters]
 	# Fully-Connected (fc): [# of neurons in input layer, # of neurons to output]
 	# Output (out): 		[# of model outputs]
-	W_conv1 = weight([5,5,  3, 8], 	n_inputs=W_conv_input, name="W_conv1")
-	W_conv2 = weight([5,5,  8, 12], n_inputs=3*8, name="W_conv2")
-	W_conv3 = weight([3,3, 12, 16], n_inputs=8*12, name="W_conv3")
-	W_conv4 = weight([3,3, 16, 21], n_inputs=12*16, name="W_conv4")
-	W_conv5 = weight([3,3, 21, 21], n_inputs=16*21, name="W_conv5")
-	W_fc1   = weight([W_fc_input*21, 400], 	n_inputs=21*21, name="W_fc1")
-	W_fc2   = weight([400, 35],           	n_inputs=400, name="W_fc2")
-	W_fc3   = weight([35, 16],             	n_inputs=35, name="W_fc3")
-	W_fc4   = weight([16, 5],              	n_inputs=16, name="W_fc4")
-	W_out   = weight([5, n_outputs],       	n_inputs=5, name="W_out")
+	W_conv1 = weight([5,5,  3, 12], 	n_inputs=W_conv_input, name="W_conv1")
+	W_conv2 = weight([5,5,  12, 16], n_inputs=3*8, name="W_conv2")
+	W_conv3 = weight([3,3, 16, 32], n_inputs=8*12, name="W_conv3")
+	W_conv4 = weight([3,3, 32, 48], n_inputs=12*16, name="W_conv4")
+	W_conv5 = weight([3,3, 48, 48], n_inputs=16*21, name="W_conv5")
+	W_fc1   = weight([W_fc_input*48, 466], 	n_inputs=21*21, name="W_fc1")
+	W_fc2   = weight([466, 233],           	n_inputs=400, name="W_fc2")
+	W_fc3   = weight([233, 54],             	n_inputs=35, name="W_fc3")
+	W_fc4   = weight([54, 12],              	n_inputs=16, name="W_fc4")
+	W_out   = weight([12, n_outputs],       	n_inputs=5, name="W_out")
 	# DEFINING BIASES
 	# Convolution (conv): 	[# number of filters]
 	# Fully-Connected (fc): [# number of filters]
 	# Output (out): 		[# of outputs]
-	B_conv1 = bias([8],   	name="B_conv1")
-	B_conv2 = bias([12],   	name="B_conv2")
-	B_conv3 = bias([16],   	name="B_conv3")
-	B_conv4 = bias([21],   	name="B_conv4")
-	B_conv5 = bias([21],   	name="B_conv5")
-	B_fc1   = bias([400], 	name="B_fc1")
-	B_fc2   = bias([35],  	name="B_fc2")
-	B_fc3   = bias([16],   	name="B_fc3")
-	B_fc4   = bias([5],   	name="B_fc4")
+	B_conv1 = bias([12],   	name="B_conv1")
+	B_conv2 = bias([16],   	name="B_conv2")
+	B_conv3 = bias([32],   	name="B_conv3")
+	B_conv4 = bias([48],   	name="B_conv4")
+	B_conv5 = bias([48],   	name="B_conv5")
+	B_fc1   = bias([466], 	name="B_fc1")
+	B_fc2   = bias([233],  	name="B_fc2")
+	B_fc3   = bias([54],   	name="B_fc3")
+	B_fc4   = bias([12],   	name="B_fc4")
 	B_out   = bias([n_outputs], name="B_out")
 
 	# DEFINING PilotNetV2 ARCHITECTURE

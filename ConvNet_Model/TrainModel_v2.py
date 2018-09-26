@@ -63,7 +63,7 @@ print("[Y] Train Size: {}. Test Size: {}".format(len(train_y), len(test_y)))
 
 # training variables
 batch_size = 64  	# number of images per cycle (in the power of 2 because # of physical processors is similar)
-n_epochs = 3000 	# number of epochs
+n_epochs = 1000 	# number of epochs
 n_outputs = 1	  	# number of outputs
 
 # deciding on learning rate using Grid Search
@@ -84,11 +84,11 @@ n_outputs = 1	  	# number of outputs
 # ********************************** #
 # optimizer variables
 global_step = tf.Variable(0, trainable=False, name="global_step")
-initial_learning_rate = 5e-5
+initial_learning_rate = 8e-5
 epsilon = 5e-6
-decay_rate = 0.80
+decay_rate = 0.90
 steps_per_epoch = len(train_x)/batch_size
-epochs_per_decay = 200
+epochs_per_decay = 100
 learning_rate = tf.train.exponential_decay(initial_learning_rate, global_step, epochs_per_decay*steps_per_epoch, decay_rate, staircase=True, name="LR_Decaying")
 
 # image input dimensions
@@ -188,7 +188,7 @@ def ConvNN_Train(x):
 			plt.pause(0.05)
 
 			if (epoch >= 1):
-				strikes = early_stop([E_val_loss_prev, E_val_loss], strikes, 5, 0.01, "validation")
+				strikes = early_stop([E_val_loss_prev, E_val_loss], strikes, 5, 0.005, "validation")
 				E_val_loss_prev = E_val_loss
 				print("Strikes: {}" .format(strikes))
 				if (strikes == 1):	# saving model right when validation loss starts to increase
@@ -219,6 +219,11 @@ def ConvNN_Train(x):
 # 		Epoch		Train_Loss		Val_Loss		ILR			FLR
 # 1.	298			1.356			0.538			8.0e-5		6.4e-5
 # 2.	120			3.851			0.778			5.0e-5		5.0e-5
+# 3.    140			3.185			0.756			6.0e-5		6.0e-5
+# -- increased number of neurons in model
+# 4.	374			0.943			0.271			8.0e-5		4.9e-5
+# -- changed number of neurons again
+# 5. 	879			0.575			0.239			8e-5		2.18e-5
 if __name__ == '__main__':
 	ConvNN_Train(x)
 

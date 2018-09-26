@@ -24,7 +24,7 @@ data = "test"
 if (data == "validation"):
 	test_data = np.load("./Data/validation_set.npy")
 elif (data == "test"):
-	test_data = np.load("./Datatest_data.npy")
+	test_data = np.load("./Data/test_data.npy")
 display_data = np.load("./Data/display_data.npy")
 
 # model information
@@ -38,6 +38,9 @@ def calc_error(prediction, label):
 
 def main():
 	last_time = time.time()
+
+	# loading steering wheel and preparing for roatation
+	steering_wheel = np.load("steering_wheel.npy")
 
 	training_variables = tf.trainable_variables()	# getting list of trainable variables defined in the model
 
@@ -58,23 +61,30 @@ def main():
 			# prediction = model.eval({x: screen[0].reshape(-1, HEIGHT, WIDTH)})[0]
 			prediction = sess.run(model, feed_dict={x: screen[0].reshape(-1, HEIGHT, WIDTH)})[0]
 
+			pred_steering_angle = prediction[0]*180
+
+			rot_mat = cv2.getRotationMatrix2D((40, 40), -1*pred_steering_angle, 1)
+			pred_steering_wheel = cv2.warpAffine(steering_wheel, rot_mat, (81, 81))
+
 			# adding prediction onto test photos
 			font = cv2.FONT_HERSHEY_SIMPLEX
-			cv2.putText(display_data[i], str(prediction*180) + str(screen[1][0]*180), (50, 50), font, 1, (0,0,255), 2)
+			cv2.putText(display_data[i], "%.2f %.2f" % (prediction[0]*180, screen[1][0]*180), (50, 50), font, 1, (0,0,255), 2)
 			cv2.imshow("Model Test", display_data[i])
 			print(str(prediction) + " : " + str(screen[1]))
+
+			cv2.imshow("steering", pred_steering_wheel)
 
 			# calculating error
 			running_error += calc_error(prediction, screen[1])
 
 			i += 1
-			if (i == 300):
+			if (i == 2000):
 				cv2.destroyAllWindows()
 				break
 			if cv2.waitKey(25) & 0xFF == ord('q'):
 					cv2.destroyAllWindows()
 					break
-			time.sleep(3)
+
 		print("Average difference: {}" .format(running_error/i))
 
 

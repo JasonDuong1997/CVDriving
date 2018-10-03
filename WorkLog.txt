@@ -55,6 +55,10 @@ Done:
 -lower learning rate and increase number of epochs to allow the model to train better
 -make sure model is loading correctly. check "test" file for loading example
 -added early stopping
+-use Grid Search to test different learning rates
+-k-fold validation
+-double data with horizontal flip
+
 
 TODO List:
 -dynamic source points for BEV (bird's eye view)
@@ -65,11 +69,8 @@ TODO List:
 -vertically stretch road
 -collect samples for right and left steering
 
--look up "grid search" for testing hyperparameter values
 
 IMPORTANT
--double data with horizontal flip
--use k-fold validation, Near Optimal Learning Rate BP Algorithm
--change graph so it only plots every epoch instead of every cycle
--use Grid Search to test different learning rates
--check  Cyclic Learning Rates
+-Near Optimal Learning Rate BP Algorithm
+-check Cyclic Learning Rates
+-for proposal paper: add graphs, change out schedule, increase price of cameras for  360 lidar, take out udacity course

@@ -83,8 +83,8 @@ print("[Y] Train Size: {}. Test Size: {}".format(len(train_y), len(test_y)))
 												# Value Increase Effect ************************************************
 batch_size = 64  								# -converge into sharper minima, less iterations
 n_epochs = 2000									# -increase training time, lower training loss, higher risk overfitting
-initial_learning_rate = 6e-5					# -faster training time, bigger gradient jumps
-epsilon = 8e-6									# -smaller weight updates
+initial_learning_rate = 4e-5					# -faster training time, bigger gradient jumps
+epsilon = 1e-6									# -smaller weight updates
 decay_rate = 0.85								# -less weight decay (smaller gradient jumps)
 epochs_per_decay = 100							# -more frequent learning rate decay (smaller and smaller gradient jumps)
 												# **********************************************************************
@@ -102,7 +102,7 @@ x = tf.placeholder("float", [None, HEIGHT, WIDTH, 3])
 y = tf.placeholder("float", [None, n_outputs])
 
 # Model Information
-version = "v2"
+version = "v1"
 model_name = "./Model_Data/PNN_{}" .format(version)
 
 
@@ -127,8 +127,8 @@ def ConvNN_Train(x):
 	# Plot to Monitor Loss
 	x_max = n_epochs
 	x_scale = n_epochs/20
-	y_max = 0.5
-	y_scale = 0.02
+	y_max = 5
+	y_scale = 0.2
 	plt.figure(figsize=(15,8))
 	plt.axis([0, x_max, 0, y_max])
 	plt.grid(True)
@@ -189,8 +189,7 @@ def ConvNN_Train(x):
 			print("Predictions[2]: {}, {}" .format(test_pred[2], test_y[2]))
 			print("Predictions[3]: {}, {}" .format(test_pred[3], test_y[3]))
 
-			plt.scatter(epoch, E_val_loss)
-			plt.pause(0.05)
+			pt_color = "blue"	# blue colored pt for decreasing loss
 
 			# Early Stopping Check
 			if (epoch >= 1):
@@ -200,6 +199,8 @@ def ConvNN_Train(x):
 				if (strikes == 1):	# saving model right when validation loss starts to increase
 					print("Saving Model Checkpoint")
 					saver.save(sess, model_name)
+					pt_color = "red"	# red colored pt for increasing loss
+
 				if (strikes == -1):	# strikeout condition
 					print("Early Stop at Epoch:{}/{}" .format(epoch, n_epochs))
 					is_saved = True
@@ -207,6 +208,9 @@ def ConvNN_Train(x):
 					print("\nTraining Done! Time Elapsed: {} minutes".format((end - start) / 60.0))
 					plt.show()
 					break
+
+			plt.scatter(epoch, E_val_loss, c=pt_color)
+			plt.pause(0.05)
 
 		end = time.time()
 		print("\nTraining Done! Time Elapsed: {} minutes" .format((end - start)/60.0))
@@ -233,7 +237,7 @@ def ConvNN_Train(x):
 # -- increased epsilon and lowered learning rate
 # 6.	452			0.746			0.355			4.0e-5		2.64e-5
 # -- lowered epsilon, increased learning rate, decreased decay rate
-# 7.
+# 7.	460			0.601			0.244			6.0e-5		3.13e-5
 
 if __name__ == '__main__':
 	ConvNN_Train(x)

@@ -2,6 +2,7 @@ import numpy as np
 import tensorflow as tf
 import cv2
 import time
+from PIL import Image
 from ConvNet_Model.PilotNetModel_v2 import PilotNetV2_Model
 
 
@@ -17,8 +18,6 @@ model = PilotNetV2_Model(x, WIDTH, HEIGHT, n_outputs, is_training=False)
 
 loader = tf.train.Saver()
 
-PNN_VERSION = "1.0"
-
 print("Loading Data")
 data = "test"
 if (data == "validation"):
@@ -28,7 +27,7 @@ elif (data == "test"):
 display_data = np.load("./Data/display_data.npy")
 
 # model information
-version = "v2"
+version = "v1"
 model_name = "./Model_Data/PNN_{}" .format(version)
 
 def calc_error(prediction, label):
@@ -36,11 +35,29 @@ def calc_error(prediction, label):
 	return error
 
 
+def display_prediction(dst_img, src_img, prediction):
+	# pasting steering wheel image onto road image
+	road_x, road_y = dst_img.size
+	wheel_x, wheel_y = src_img.size
+	dst_img.paste(src_img, (int(road_x / 2 - wheel_x / 2), int(road_y / 2 + 1.5 * wheel_y)))
+	road_img = np.array(dst_img)
+
+	# pasting the steering angle onto road image
+	font = cv2.FONT_HERSHEY_SIMPLEX
+	cv2.putText(road_img, "%.2f Degrees" % (prediction[0]*180), (50, 50), font, 1, (0,0,255), 2)
+	return road_img
+
+def process_steering(pred_angle, steering_wheel_img):
+	pred_angle = pred_angle[0] * 180
+	rot_mat = cv2.getRotationMatrix2D((40, 40), -1 * pred_angle, 1)
+	pred_steering_wheel = cv2.warpAffine(steering_wheel_img, rot_mat, (81, 81))
+	return pred_steering_wheel
+
 def main():
 	last_time = time.time()
 
 	# loading steering wheel and preparing for roatation
-	steering_wheel = np.load("steering_wheel.npy")
+	steering_wheel_img = np.load("steering_wheel.npy")
 
 	training_variables = tf.trainable_variables()	# getting list of trainable variables defined in the model
 
@@ -61,24 +78,19 @@ def main():
 			# prediction = model.eval({x: screen[0].reshape(-1, HEIGHT, WIDTH)})[0]
 			prediction = sess.run(model, feed_dict={x: screen[0].reshape(-1, HEIGHT, WIDTH)})[0]
 
-			pred_steering_angle = prediction[0]*180
-
-			rot_mat = cv2.getRotationMatrix2D((40, 40), -1*pred_steering_angle, 1)
-			pred_steering_wheel = cv2.warpAffine(steering_wheel, rot_mat, (81, 81))
+			steering_wheel = process_steering(prediction, steering_wheel_img)
 
 			# adding prediction onto test photos
-			font = cv2.FONT_HERSHEY_SIMPLEX
-			cv2.putText(display_data[i], "%.2f %.2f" % (prediction[0]*180, screen[1][0]*180), (50, 50), font, 1, (0,0,255), 2)
-			cv2.imshow("Model Test", display_data[i])
-			print(str(prediction) + " : " + str(screen[1]))
-
-			cv2.imshow("steering", pred_steering_wheel)
+			road_img = Image.fromarray(display_data[i], "RGB")	# converting numpy array to Image format
+			wheel_img = Image.fromarray(steering_wheel, "RGB")
+			test_img = display_prediction(road_img, wheel_img, prediction)
+			cv2.imshow("Model_Test", test_img)
 
 			# calculating error
 			running_error += calc_error(prediction, screen[1])
 
 			i += 1
-			if (i == 2000):
+			if (i == len(display_data) - 1):
 				cv2.destroyAllWindows()
 				break
 			if cv2.waitKey(25) & 0xFF == ord('q'):

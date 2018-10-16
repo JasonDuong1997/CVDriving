@@ -41,7 +41,7 @@ def normalize(x, is_training):
 
 
 ### MODEL DEFINITION ###
-def model(x, WIDTH, HEIGHT, n_outputs, is_training):
+def cnn_model(x, WIDTH, HEIGHT, n_outputs, is_training):
 	W_conv_input = WIDTH*HEIGHT*3
 	W_fc_input = 8*10
 

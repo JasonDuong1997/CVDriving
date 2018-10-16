@@ -3,7 +3,7 @@ import tensorflow as tf
 import cv2
 import time
 from PIL import Image
-from ConvNet_Model.PilotNetModel_v2 import PilotNetV2_Model
+from ConvNet_Model.PilotNetModel_v2 import cnn_model
 
 
 tf.reset_default_graph()
@@ -14,7 +14,7 @@ n_outputs = 1
 pool_s = 2
 
 x = tf.placeholder("float", [None, HEIGHT, WIDTH])
-model = PilotNetV2_Model(x, WIDTH, HEIGHT, n_outputs, is_training=False)
+model = cnn_model(x, WIDTH, HEIGHT, n_outputs, is_training=False)
 
 loader = tf.train.Saver()
 
@@ -75,7 +75,6 @@ def main():
 		running_error = 0
 		for screen in test_data:
 			# making prediction
-			# prediction = model.eval({x: screen[0].reshape(-1, HEIGHT, WIDTH)})[0]
 			prediction = sess.run(model, feed_dict={x: screen[0].reshape(-1, HEIGHT, WIDTH)})[0]
 
 			steering_wheel = process_steering(prediction, steering_wheel_img)

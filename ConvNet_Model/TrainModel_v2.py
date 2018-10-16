@@ -1,5 +1,5 @@
 import tensorflow as tf
-from ConvNet_Model.PilotNetModel_v2 import  PilotNetV2_Model
+from ConvNet_Model.PilotNetModel_v2 import cnn_model
 import matplotlib.pyplot as plt
 import numpy as np
 import time
@@ -108,14 +108,14 @@ model_name = "./Model_Data/PNN_{}" .format(version)
 
 ### TRAINING FUNCTION ###
 # Specifications
-# Model: 				PilotNetV2
+# Model: 				Custom
 # Cost Function: 		Mean Squared Loss with L2 Loss Weight Penalization
 # Optimizer: 			AdamOptimizer
 # Learning Rate Mod: 	Exponential Decay
 # Special Functions: 	Early Stopping, K-Fold Cross-Validation
 def ConvNN_Train(x):
 	# Training Operations
-	prediction = PilotNetV2_Model(x, WIDTH, HEIGHT, n_outputs, is_training=True)
+	prediction = cnn_model(x, WIDTH, HEIGHT, n_outputs, is_training=True)
 	training_variables = tf.trainable_variables()	# getting list of trainable variables defined in the model
 	cost = tf.reduce_mean(tf.square(tf.subtract(prediction, y))) + tf.add_n([tf.nn.l2_loss(variable) for variable in training_variables if "B" not in variable.name])*learning_rate		# penalizing large weights with L2 loss
 

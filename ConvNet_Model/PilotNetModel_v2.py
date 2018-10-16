@@ -41,7 +41,7 @@ def normalize(x, is_training):
 
 
 ### MODEL DEFINITION ###
-def PilotNetV2_Model(x, WIDTH, HEIGHT, n_outputs, is_training):
+def model(x, WIDTH, HEIGHT, n_outputs, is_training):
 	W_conv_input = WIDTH*HEIGHT*3
 	W_fc_input = 8*10
 
@@ -58,7 +58,7 @@ def PilotNetV2_Model(x, WIDTH, HEIGHT, n_outputs, is_training):
 	W_conv7 = weight([3,3, 96, 64], n_inputs=96*64, 		name="W_conv7")
 	W_conv8 = weight([3,3, 64, 64], n_inputs=64*64, 		name="W_conv8")
 	W_conv9 = weight([3,3, 64, 128], n_inputs=64*64, 		name="W_conv9")
-	W_fc1   = weight([W_fc_input*128, 720], n_inputs=40*40, 	name="W_fc1")
+	W_fc1   = weight([W_fc_input*128, 720], n_inputs=40*40, name="W_fc1")
 	W_fc2   = weight([720, 360],           	n_inputs=466,	name="W_fc2")
 	W_fc3   = weight([360, 180],            n_inputs=233, 	name="W_fc3")
 	W_out   = weight([180, n_outputs],      n_inputs=12, 	name="W_out")
@@ -80,18 +80,21 @@ def PilotNetV2_Model(x, WIDTH, HEIGHT, n_outputs, is_training):
 	B_fc3   = bias([180],   	name="B_fc3")
 	B_out   = bias([n_outputs], name="B_out")
 
-	# DEFINING PilotNetV2 ARCHITECTURE
+	# DEFINING MODEL ARCHITECTURE
 	# Input Image(width = 80, height = 60, RGB) ->
 	# Normalization ->
+	# Convolution(7x7) -> Relu ->
+	# Convolution(7x7) -> Relu ->
+	# Convolution(7x7) -> Relu -> Normalize -> MaxPool -> Dropout
 	# Convolution(5x5) -> Relu ->
 	# Convolution(5x5) -> Relu ->
-	# Convolution(5x5) -> Relu ->
+	# Convolution(5x5) -> Relu -> Normalize -> MaxPool -> Dropout
 	# Convolution(3x3) -> Relu ->
 	# Convolution(3x3) -> Relu ->
-	# Fully Connected Layer(466) -> Relu ->
-	# Fully Connected Layer(233) -> Relu ->
-	# Fully Connected Layer(54)  -> Relu ->
-	# Fully Connected Layer(12)  -> Relu ->
+	# Convolution(3x3) -> Relu ->
+	# Fully Connected Layer(720) -> Relu ->
+	# Fully Connected Layer(360) -> Relu ->
+	# Fully Connected Layer(180) -> Relu ->
 	# Output -> Steering Angle
 	x = tf.reshape(x, shape=[-1, HEIGHT, WIDTH, 3])
 	print("Input Size: {}" .format(x.get_shape()))

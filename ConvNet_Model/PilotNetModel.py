@@ -1,7 +1,6 @@
 import tensorflow as tf
-import tflearn
 
-is_training = True
+is_training = False
 
 def conv2d(x, weight, bias, strides=1):
 	conv = tf.nn.conv2d(x, weight, strides=[1, strides,strides, 1], padding="SAME")
@@ -25,31 +24,31 @@ def PilotNet_Model(x, WIDTH, HEIGHT, n_outputs, pool_s=2):
 	# Conv (conv): [filter_width, filter_height, channels, # of filters]
 	# FC (fc)    : [size of downsampled image * size of layer input, # of neurons in layer]
 	# Out (out)  : [# of outputs]
-	W_conv1 = tf.Variable(tf.random_normal([5,5,  3, 24]), name="W_conv1")
-	W_conv2 = tf.Variable(tf.random_normal([5,5, 24, 36]), name="W_conv2")
-	W_conv3 = tf.Variable(tf.random_normal([5,5, 36, 48]), name="W_conv3")
-	W_conv4 = tf.Variable(tf.random_normal([3,3, 48, 64]), name="W_conv4")
-	W_conv5 = tf.Variable(tf.random_normal([3,3, 64, 64]), name="W_conv5")
-	W_fc1 =  tf.Variable(tf.random_normal([W_fc_input*64, 1164]), name="W_fc1")
-	W_fc2 =  tf.Variable(tf.random_normal([1164, 100]), name="W_fc2")
-	W_fc3 =  tf.Variable(tf.random_normal([100, 50]), name="W_fc3")
-	W_out = tf.Variable(tf.random_normal([50, n_outputs]), name="W_out")
+	W_conv1 = tf.Variable(tf.random_normal([5,5,  3, 24]), 			name="W_conv1")
+	W_conv2 = tf.Variable(tf.random_normal([5,5, 24, 36]), 			name="W_conv2")
+	W_conv3 = tf.Variable(tf.random_normal([5,5, 36, 48]), 			name="W_conv3")
+	W_conv4 = tf.Variable(tf.random_normal([3,3, 48, 64]), 			name="W_conv4")
+	W_conv5 = tf.Variable(tf.random_normal([3,3, 64, 64]), 			name="W_conv5")
+	W_fc1 	=  tf.Variable(tf.random_normal([W_fc_input*64, 1164]), name="W_fc1")
+	W_fc2 	=  tf.Variable(tf.random_normal([1164, 100]),			name="W_fc2")
+	W_fc3 	=  tf.Variable(tf.random_normal([100, 50]), 			name="W_fc3")
+	W_out 	= tf.Variable(tf.random_normal([50, n_outputs]), 		name="W_out")
 	# DEFINING BIASES
 	# Conv (conv): [# number of filters]
 	# FC (fc)    : [# number of filters]
 	# Out (out)  : [# of outputs]
-	B_conv1 = tf.Variable(tf.random_normal([24]), name="B_conv1")
-	B_conv2 = tf.Variable(tf.random_normal([36]), name="B_conv2")
-	B_conv3 = tf.Variable(tf.random_normal([48]), name="B_conv3")
-	B_conv4 = tf.Variable(tf.random_normal([64]), name="B_conv4")
-	B_conv5 = tf.Variable(tf.random_normal([64]), name="B_conv5")
-	B_fc1 = tf.Variable(tf.random_normal([1164]), name="B_fc1")
-	B_fc2 = tf.Variable(tf.random_normal([100]), name="B_fc2")
-	B_fc3 = tf.Variable(tf.random_normal([50]), name="B_fc3")
-	B_out = tf.Variable(tf.random_normal([n_outputs]), name="B_out")
+	B_conv1 = tf.Variable(tf.random_normal([24]), 			name="B_conv1")
+	B_conv2 = tf.Variable(tf.random_normal([36]), 			name="B_conv2")
+	B_conv3 = tf.Variable(tf.random_normal([48]), 			name="B_conv3")
+	B_conv4 = tf.Variable(tf.random_normal([64]), 			name="B_conv4")
+	B_conv5 = tf.Variable(tf.random_normal([64]), 			name="B_conv5")
+	B_fc1 	= tf.Variable(tf.random_normal([1164]), 		name="B_fc1")
+	B_fc2 	= tf.Variable(tf.random_normal([100]), 			name="B_fc2")
+	B_fc3 	= tf.Variable(tf.random_normal([50]), 			name="B_fc3")
+	B_out 	= tf.Variable(tf.random_normal([n_outputs]), 	name="B_out")
 
 	# DEFINING PilotNet ARCHITECTURE
-	# Input Image(width = 80, height = 62, YUV) ->
+	# Input Image(width = 80, height = 60, YUV) ->
 	# Normalization ->
 	# Convolution(5x5) -> Relu -> Normalization -> Relu ->
 	# Convolution(5x5) -> Relu -> Normalization -> Relu ->
@@ -99,7 +98,7 @@ def PilotNet_Model(x, WIDTH, HEIGHT, n_outputs, pool_s=2):
 	fc2 = dropout(fc2, 0.5)
 
 	fc3 = relu(tf.matmul(fc2, W_fc3) + B_fc3)
-	fc3 = dropout(fc3, 0.2)
+	fc3 = dropout(fc3, 0.5)
 
 	output = tf.matmul(fc3, W_out) + B_out
 

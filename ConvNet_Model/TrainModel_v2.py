@@ -63,7 +63,7 @@ train_x, train_y, test_x, test_y = k_fold_selector(k_split_data, 1)
 print("[X] Train Size: {}. Test Size: {}".format(len(train_x), len(test_x)))
 print("[Y] Train Size: {}. Test Size: {}".format(len(train_y), len(test_y)))
 
-# Grid Search of Learning RAte
+# Grid Search of Learning Rate
 # *********************************** #
 # Learning Rate List with 300 Epochs  #
 # *********************************** #
@@ -143,7 +143,6 @@ def ConvNN_Train(x):
 	lr_test = graph.get_tensor_by_name("LR_Decaying:0")
 
 	start = time.time()	# keeping track of total training time
-
 
 	config = tf.ConfigProto()
 	config.gpu_options.allow_growth = True	# enabling dynamic allocation of GPU memory
